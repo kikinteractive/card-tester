@@ -149,9 +149,8 @@ function testCard(url, callback) {
 function testCard2(url, callback) {
 
 	var childProcess = require('child_process'),
-		ls;
-
-	var id = new Buffer(url).toString('base64');
+		id = new Buffer(url).toString('base64'),
+		ls, output;
 
 	id = id.replace(/=/g, "");
 
@@ -169,39 +168,31 @@ function testCard2(url, callback) {
 
 		console.log('Child Process STDOUT: '+stdout);
 		console.log('Child Process STDERR: '+stderr);
+
+		output = stdout;
 	});
 
 	ls.on('exit', function (code) {
-	// 	console.log('Child process exited with exit code '+code);
-	// 	var fs = require('fs');
-
-	// 	// fs.readFile('data/' + id + '.txt', 'utf8', function (err,data) {
-	// 	//   if (err) {
-	// 	//     return console.log(err);
-	// 	//   }
-	// 	//   //console.log(data);
-	// 	//   try {
-	// 	//   	var d = JSON.parse(data);
-
-	// 	//   	d.screenshot = "/screens/" + id + ".png";
-
-	// 	//   	callback(d);
-	// 	//   } catch (err) {
-	// 	//   	callback();
-	// 	//   }
-	// 	// });
 		
-	// 	var text = fs.readFileSync('./tmp/' + id + '.txt','utf8');
+		console.log('Child process exited with exit code '+code);
+		
+		// var fs = require('fs');
+		// var text = fs.readFileSync('./tmp/' + id + '.txt','utf8');
 
-	// 	if ( text ) {
-	// 		var d = JSON.parse(text);
-	// 		//d.screenshot = "/screens/" + id + ".png";
-	// 		//d.screenshot2 = "/screens/" + id + "2.png";
-	// 		callback(d);
-	// 	} else {
-	// 		callback();
-	// 	}
-		callback();
+		// if ( text ) {
+		// 	var d = JSON.parse(text);
+		// 	//d.screenshot = "/screens/" + id + ".png";
+		// 	//d.screenshot2 = "/screens/" + id + "2.png";
+		// 	callback(d);
+		// } else {
+		// 	callback();
+		// }
+
+		if (output) {
+			var d = JSON.parse(output);
+			callback(d);
+		} else {
+			callback();
+		}
 	});
-
 }
