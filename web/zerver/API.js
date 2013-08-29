@@ -159,7 +159,7 @@ function testCard2(url, callback) {
 		id = id.substr(0, 30);
 	}
 
-	ls = childProcess.exec('phantomjs card_verification.js ' + url + ' ' + id + ' > tmp/' + id + '.txt', function (error, stdout, stderr) {
+	ls = childProcess.exec('phantomjs card_verification.js ' + url + ' ' + id + ' > ./tmp/' + id + '.txt', function (error, stdout, stderr) {
 		if (error) {
 			console.log(error.stack);
 			console.log('Error code: '+error.code);
@@ -190,7 +190,7 @@ function testCard2(url, callback) {
 		//   }
 		// });
 		
-		var text = fs.readFileSync('tmp/' + id + '.txt','utf8');
+		var text = fs.readFileSync('./tmp/' + id + '.txt','utf8');
 
 		if ( text ) {
 			var d = JSON.parse(text);
