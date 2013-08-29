@@ -82,6 +82,10 @@ page.onResourceReceived = function (res) {
 	}
 };
 
+// page.onLoadFinished = function (page, config, status) {
+	
+// };
+
 page.open(url, function (status) {
 
 	var loadTime;

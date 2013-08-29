@@ -159,8 +159,7 @@ function testCard2(url, callback) {
 		id = id.substr(0, 30);
 	}
 
-	//ls = childProcess.exec('phantomjs card_verification.js ' + url + ' ' + id + ' > data/' + id + '.txt', function (error, stdout, stderr) {
-	ls = childProcess.exec('phantomjs card_verification.js ' + url + ' ' + id, function (error, stdout, stderr) {
+	ls = childProcess.exec('phantomjs card_verification.js ' + url + ' ' + id + ' > tmp/' + id + '.txt', function (error, stdout, stderr) {
 		if (error) {
 			console.log(error.stack);
 			console.log('Error code: '+error.code);
@@ -172,35 +171,35 @@ function testCard2(url, callback) {
 	});
 
 	ls.on('exit', function (code) {
-		// console.log('Child process exited with exit code '+code);
-		// var fs = require('fs');
+		console.log('Child process exited with exit code '+code);
+		var fs = require('fs');
 
-		// // fs.readFile('data/' + id + '.txt', 'utf8', function (err,data) {
-		// //   if (err) {
-		// //     return console.log(err);
-		// //   }
-		// //   //console.log(data);
-		// //   try {
-		// //   	var d = JSON.parse(data);
+		// fs.readFile('data/' + id + '.txt', 'utf8', function (err,data) {
+		//   if (err) {
+		//     return console.log(err);
+		//   }
+		//   //console.log(data);
+		//   try {
+		//   	var d = JSON.parse(data);
 
-		// //   	d.screenshot = "/screens/" + id + ".png";
+		//   	d.screenshot = "/screens/" + id + ".png";
 
-		// //   	callback(d);
-		// //   } catch (err) {
-		// //   	callback();
-		// //   }
-		// // });
+		//   	callback(d);
+		//   } catch (err) {
+		//   	callback();
+		//   }
+		// });
 		
-		// var text = fs.readFileSync('data/' + id + '.txt','utf8');
+		var text = fs.readFileSync('tmp/' + id + '.txt','utf8');
 
-		// if ( text ) {
-		// 	var d = JSON.parse(text);
-		// 	d.screenshot = "/screens/" + id + ".png";
-		// 	d.screenshot2 = "/screens/" + id + "2.png";
-		// 	callback(d);
-		// } else {
-		// 	callback();
-		// }
+		if ( text ) {
+			var d = JSON.parse(text);
+			//d.screenshot = "/screens/" + id + ".png";
+			//d.screenshot2 = "/screens/" + id + "2.png";
+			callback(d);
+		} else {
+			callback();
+		}
 	});
 
 }
