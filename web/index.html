@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="shortcut icon" href="../../assets/ico/favicon.png">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+
+	<title>Card Testing Service</title>
+
+	<link href="css/bootstrap.css" rel="stylesheet">
+	<link href="css/kikcup.css" rel="stylesheet">
+
+	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!--[if lt IE 9]>
+	  <script src="../../assets/js/html5shiv.js"></script>
+	  <script src="../../assets/js/respond.min.js"></script>
+	  <![endif]-->
+
+<style type="text/css">
+	.screenshotcontainer {
+		text-align: center;
+	}
+</style>
+
+	</head>
+
+	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="/"><span class="glyphicon glyphicon-cloud"></span> Card Testing Service</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="container well">
+			<div class="row">
+				<div class="col-md-4">
+					<h1>Card Testing Service</h1>
+					<p>This server automates some of the repetitive tasks that must be checked before a card can be included in the More Card.</p>
+				</div>
+				<div class="col-md-8">
+					<br/><br/>
+					<form role="form">
+						<div class="form-group m1n">
+							<label for="cardurl">Card URL</label>
+							<input type="text" class="form-control" id="cardurl" placeholder="Enter Card URL">
+						</div>
+						<div class="alertwrap">
+							<div class="alert alert-danger hidden"> <!--alert-dismissable -->
+								<!-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> -->
+								<!-- <strong>Error!</strong> -->
+								<span>Make sure you register with your uwaterloo.ca email address so we know you are a current student!</span>
+							</div>
+						</div>
+						<div class="">
+							<button id="submitbtn" type="submit" class="btn btn-success btn-lg">Run Tests</button>
+						</div>
+					</form>
+					<br/>
+				</div>
+			</div>
+		</div>
+
+		<div class="container testresults hidden">
+			<div class="row">
+				<div class="col-md-12">
+					<table class="table table-bordered">
+						<thead>
+							<tr>
+								<th>Test #</th>
+								<th>Test</th>
+								<th>Result</th>
+								<th>Success</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<h4 class="screenshotcontainer">Right after DOM Load</h4>
+					<div class="screenshotcontainer screenshotcontainer1"></div>
+				</div>
+				<div class="col-md-6">
+					<h4 class="screenshotcontainer">1.25 seconds after DOM Load</h4>
+					<div class="screenshotcontainer screenshotcontainer2"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="tempp"></div>
+				</div>
+			</div>
+		</div>
+
+		<script src="//code.jquery.com/jquery.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="/zerver/API.js"></script>
+		<script type="text/javascript">
+			$("form").submit(function(d){
+
+				var data = $("#cardurl").val();
+
+				if ( data.indexOf("http") != 0 ) {
+
+					showFormError("URL must start with http or https");
+					return false;
+				}
+
+				localStorage["lastURL"] = data;
+
+				$(".alert").remove();
+
+				// if ( data.member1.name.length <= 0 ) {
+				//   showFormError("You need to specify a name for Team Member 1");
+				//   return false;
+				// }
+
+				// if ( data.member1.email.length <= 0 ) {
+				//   showFormError("You need to supply an email for Team Member 1");
+				//   return false;
+				// }
+
+				// if ( data.member1.email.length && !emailCheck(data.member1.email) ) {
+				//   showFormError("Team member 1 must supply a uwaterloo.ca email");
+				//   return false;
+				// }
+
+				// if ( data.member2.email.length && !emailCheck(data.member2.email) ) {
+				//   showFormError("Team member 2 must supply a uwaterloo.ca email");
+				//   return false;
+				// }
+
+				$("#submitbtn").addClass("disabled").text("Testing...");
+
+				API.testCard(data, function(data){
+
+					$("#submitbtn").removeClass("disabled").text("Run Tests");
+					
+					if ( !data ) {
+						return;
+					}
+
+					$(".testresults").removeClass("hidden");
+					$(".testresults").find("tbody").html("");
+					$(".screenshot").remove();
+
+					var count = 0;
+
+					if ( data.more && data.more.title ) {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Sidebar Title", data.more.title, true));
+					} else {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Sidebar Title", "", false));
+					}
+
+					if ( data.more && data.more.icon ) {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />", true));
+					} else {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Sidebar Icon", "N/A", false));
+					}
+
+					if ( data.more && data.more.description ) {
+						$(".testresults").find("tbody").append(getTableRow(++count, "More Description", data.more.description, true));
+					} else {
+						$(".testresults").find("tbody").append(getTableRow(++count, "More Description", "No description found", false));
+					}
+
+					if ( data.more && data.more.hostname ) {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Include In More", data.more.hostname, true));
+					} else {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Include In More", "No kik-more tag found", false));
+					}
+
+					if ( data.unsupported ) {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Unsupported OS", data.unsupported, true));
+					} else {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Unsupported OS", "N/A", true));
+					}
+
+					if ( data.link && data.link.terms ) {
+						$(".testresults").find("tbody").append(getTableRow(++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true));
+					} else {
+						//$(".testresults").find("tbody").append(getTableRow(++count, "T&C Not Provided", "", true));
+					}
+
+					if ( data.link && data.link.privacy ) {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true));
+					} else {
+						//$(".testresults").find("tbody").append(getTableRow(++count, "Privacy Policy Not Provided", "", true));
+					}
+
+					if ( data.load && data.load.time ) {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Load Time", data.load.time + " ms", (data.load.time < 500 ? true : false)));
+					}
+
+					if ( data.load && data.load.requestCount ) {
+						$(".testresults").find("tbody").append(getTableRow(++count, "# of Requests", data.load.requestCount, (data.load.requestCount < 50 ? true : false)));
+					}
+
+					if ( data.load && data.load.cardSize ) {
+						$(".testresults").find("tbody").append(getTableRow(++count, "Card Size", (data.load.cardSize/1000) + " kb", (data.load.cardSize < 200000 ? true : false)));
+					}
+
+					if ( data.screenshot ) {
+						$(".screenshotcontainer1").append("<img class='screenshot img-thumbnail' src='" + data.screenshot + "' />");
+						$(".screenshotcontainer2").append("<img class='screenshot img-thumbnail' src='" + data.screenshot2 + "' />");
+					}
+				});
+
+				return false;
+			});
+
+			function getTableRow(id, testname, value, success) {
+
+				var html = [];
+
+				if ( !success ) {
+					html.push("<tr class='danger'>");
+				} else {
+					html.push("<tr class='success'>");
+				}
+
+				html.push("<td>");
+				html.push(id);
+				html.push("</td>");
+
+				html.push("<td>");
+				html.push(testname);
+				html.push("</td>");
+
+				html.push("<td>");
+				html.push(value);
+				html.push("</td>");
+
+				html.push("<td>");
+				html.push(success);
+				html.push("</td>");
+
+				html.push("</tr>");
+
+				return html.join("");
+			}
+
+			function showFormError(message) {
+				var elem = alertTemplate.clone();
+				elem.find('span').text(message);
+				$(".alertwrap").append(elem);
+			}
+
+			window.alertTemplate = $(".alert").remove().removeClass("hidden");
+
+			if ( localStorage["lastURL"] ) {
+				$("#cardurl").val(localStorage["lastURL"]);
+			}
+		</script>
+	</body>
+	</html>
