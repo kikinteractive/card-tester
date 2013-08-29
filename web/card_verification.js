@@ -19,8 +19,12 @@ if (system.args.length === 1) {
 	id = system.args[2];
 }
 
+page.settings.localToRemoteUrlAccessEnabled = true;
+page.settings.webSecurityEnabled = false;
+
 page.settings.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3";
 page.viewportSize = { width: 320, height : 548 };
+
 page.resources = [];
 
 page.onConsoleMessage = function (msg) {
@@ -83,7 +87,7 @@ page.onResourceReceived = function (res) {
 };
 
 // page.onLoadFinished = function (page, config, status) {
-	
+
 // };
 
 page.open(url, function (status) {
@@ -97,7 +101,7 @@ page.open(url, function (status) {
         //console.log('Page.open Loading time ' + loadTime + ' msec');
     }
 
-    page.render('screens/' + id + '.png');
+    //page.render('screens/' + id + '.png');
 
 	var cardReport = {
 		more: {
@@ -109,6 +113,8 @@ page.open(url, function (status) {
 		link: {
 		}
 	};
+	
+    cardReport.screenshot = "data:image/png;base64," + page.renderBase64();
 
 	var resources = [];
 	var size = 0;
@@ -174,7 +180,8 @@ page.open(url, function (status) {
 	}, cardReport, logFilter);
 
 	setTimeout(function(){
-		page.render('screens/' + id + '2.png');
+		//page.render('screens/' + id + '2.png');
+		//cardReport.screenshot2 = "data:image/png;base64," + page.renderBase64();
 		phantom.exit();
 	}, 1250);
 });
