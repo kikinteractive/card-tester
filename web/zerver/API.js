@@ -170,6 +170,13 @@ function testCard2(url, callback) {
 		console.log('Child Process STDERR: '+stderr);
 
 		output = stdout;
+
+		if (output) {
+			var d = JSON.parse(output);
+			callback(d);
+		} else {
+			callback();
+		}
 	});
 
 	ls.on('exit', function (code) {
@@ -187,12 +194,5 @@ function testCard2(url, callback) {
 		// } else {
 		// 	callback();
 		// }
-
-		if (output) {
-			var d = JSON.parse(output);
-			callback(d);
-		} else {
-			callback();
-		}
 	});
 }
