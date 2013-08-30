@@ -149,50 +149,41 @@ function testCard(url, callback) {
 function testCard2(url, callback) {
 
 	var childProcess = require('child_process'),
-		id = new Buffer(url).toString('base64'),
 		ls, output;
 
-	id = id.replace(/=/g, "");
-
-	if ( id.length > 30 ) {
-		id = id.substr(0, 30);
-	}
-
-	//ls = childProcess.exec('phantomjs card_verification.js ' + url + ' ' + id + ' > ./tmp/' + id + '.txt', function (error, stdout, stderr) {
-	ls = childProcess.exec('phantomjs card_verification.js ' + url + ' ' + id, function (error, stdout, stderr) {
+	ls = childProcess.exec('phantomjs card_verification.js ' + url, function (error, stdout, stderr) {
 		if (error) {
 			console.log(error.stack);
 			console.log('Error code: '+error.code);
 			console.log('Signal received: '+error.signal);
 		}
 
-		console.log('Child Process STDOUT: '+stdout);
-		console.log('Child Process STDERR: '+stderr);
+		//console.log('Child Process STDOUT: '+stdout);
+		//console.log('Child Process STDERR: '+stderr);
 
 		output = stdout;
 
+		console.log("output.length: " + output.length);
+		
 		if (output) {
-			var d = JSON.parse(output);
-			callback(d);
+
+			var cleaned = output.replace("#######CARDTESTER#######", "");
+
+			console.log("cleaned: " + cleaned.substr(0, 100));
+			
+			try {
+				var d = JSON.parse(cleaned);
+				callback(d);
+			} catch(err) {
+				callback();
+			}
+
 		} else {
 			callback();
 		}
 	});
 
 	ls.on('exit', function (code) {
-		
-		console.log('Child process exited with exit code '+code);
-		
-		// var fs = require('fs');
-		// var text = fs.readFileSync('./tmp/' + id + '.txt','utf8');
-
-		// if ( text ) {
-		// 	var d = JSON.parse(text);
-		// 	//d.screenshot = "/screens/" + id + ".png";
-		// 	//d.screenshot2 = "/screens/" + id + "2.png";
-		// 	callback(d);
-		// } else {
-		// 	callback();
-		// }
+		console.log('Child process exited with exit code '+code+'for card url: ' + url);
 	});
 }

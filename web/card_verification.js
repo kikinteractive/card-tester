@@ -5,18 +5,13 @@ var fs     = require('fs'),
 var url = "http://cards-image-search-dev.herokuapp.com",
 	t   = Date.now(),
 	tt  = Date.now(),
-	logFilter = "#######CARDTESTER#######",
-	id;
-
-//url = "http://static.tresensa.com/run-and-bun/index.html?dst=A0020";
-//url = "http://youtube.kik.com";
+	logFilter = "#######CARDTESTER#######";
 
 if (system.args.length === 1) {
-    console.log('Usage: card_verification.js <some URL> <base64 url>');
+    console.log('Usage: card_verification.js <some URL>');
     phantom.exit(1);
 } else {
 	url = system.args[1];
-	id = system.args[2];
 }
 
 page.settings.localToRemoteUrlAccessEnabled = true;
@@ -38,7 +33,6 @@ function printArgs() {
     for (i = 0, ilen = arguments.length; i < ilen; ++i) {
         //console.log("    arguments[" + i + "] = " + JSON.stringify(arguments[i]));
     }
-    //console.log("");
 }
 
 page.onInitialized = function() {
@@ -50,11 +44,17 @@ page.onInitialized = function() {
 			window.callPhantom('DOMContentLoaded');
 		}, false);
 	});
+
+	page.evaluate(function(domContentLoadedMsg) {
+		document.addEventListener('load', function() {
+			window.callPhantom('load');
+		}, false);
+	});
 };
 
 page.onCallback = function(data) {
-	//console.log('DOMContentLoaded');
 	tt = Date.now() - tt;
+	//console.log('DOMContentLoaded' + data);
 	//console.log('Loading time ' + tt + ' msec');
 };
 
@@ -86,9 +86,9 @@ page.onResourceReceived = function (res) {
 	}
 };
 
-// page.onLoadFinished = function (page, config, status) {
-
-// };
+page.onLoadFinished = function (page, config, status) {
+	//console.log(logFilter + "page.onLoadFinished");
+};
 
 page.open(url, function (status) {
 
@@ -97,11 +97,9 @@ page.open(url, function (status) {
 	if (status !== 'success') {
         //console.log('FAIL to load the address');
     } else {
-        loadTime = Date.now() - t;
         //console.log('Page.open Loading time ' + loadTime + ' msec');
+        loadTime = Date.now() - t;
     }
-
-    //page.render('screens/' + id + '.png');
 
 	var cardReport = {
 		more: {
@@ -114,7 +112,7 @@ page.open(url, function (status) {
 		}
 	};
 	
-    cardReport.screenshot = "data:image/png;base64," + page.renderBase64();
+    cardReport.screenshot = generateDataURL(page.renderBase64());
 
 	var resources = [];
 	var size = 0;
@@ -138,7 +136,7 @@ page.open(url, function (status) {
 		return document.title;
 	});
 
-	page.evaluate(function (cardReport, logFilter) {
+	cardReport = page.evaluate(function (cardReport, logFilter) {
 
 		var metaTags = document.head.childNodes;
 
@@ -174,14 +172,33 @@ page.open(url, function (status) {
 			}
 		}
 
-		//console.log("-----------------");
-		console.log(logFilter + JSON.stringify(cardReport));
-		//console.log("-----------------");
+		return cardReport;
+
 	}, cardReport, logFilter);
+	
+	var start = new Date().getTime();
+
+	worstHackEver(2000);
 
 	setTimeout(function(){
-		//page.render('screens/' + id + '2.png');
-		//cardReport.screenshot2 = "data:image/png;base64," + page.renderBase64();
+		
+		cardReport.screenshot2 = generateDataURL(page.renderBase64());
+		
+		worstHackEver(2000);
+
+		console.log(logFilter + JSON.stringify(cardReport));
+
 		phantom.exit();
-	}, 1250);
+
+	}, 4250);
+
+	function worstHackEver(time) {
+		while ( (new Date().getTime()) - start < time ) {
+			start = start;
+		}
+	}
+
+	function generateDataURL(data) {
+		return "data:image/png;base64," + data;
+	}
 });
