@@ -242,7 +242,11 @@
 							// console.log(resource);
 							// console.log("------------------------");
 
-							$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, "", -1));
+							if ( resource.startReply && resource.startReply.bodySize ) {
+								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", -1));
+							} else {
+								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, "", -1));
+							}
 						});
 					}
 				});
