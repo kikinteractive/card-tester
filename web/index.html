@@ -217,11 +217,11 @@
 					count = 0;
 
 					if ( data.load && data.load.domLoad ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "DOMContentLoaded", data.load.domLoad + " ms", (data.load.domLoad < 500 ? true : false)));
+						$(".loadtests").find("tbody").append(getTableRow(++count, "DOMContentLoaded", data.load.domLoad + " ms", (data.load.domLoad < 1250 ? true : false)));
 					}
 
 					if ( data.load && data.load.fullLoad ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "Full Load Time", data.load.fullLoad + " ms", (data.load.fullLoad < 500 ? true : false)));
+						$(".loadtests").find("tbody").append(getTableRow(++count, "Full Load Time", data.load.fullLoad + " ms", (data.load.fullLoad < 1250 ? true : false)));
 					}
 
 					if ( data.load && data.load.requestCount ) {
@@ -229,7 +229,7 @@
 					}
 
 					if ( data.load && data.load.cardSize ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "Card Size", (data.load.cardSize/1000) + " kb", (data.load.cardSize < 200000 ? true : false)));
+						$(".loadtests").find("tbody").append(getTableRow(++count, "Card Size", (data.load.cardSize/1000) + " kb", (data.load.cardSize < 350000 ? true : false)));
 					}
 
 					if ( data.screenshot ) {
