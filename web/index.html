@@ -68,7 +68,25 @@
 		<div class="container testresults hidden">
 			<div class="row">
 				<div class="col-md-12">
-					<table class="table table-bordered">
+					<h3>Basic Tests</h3>
+					<table class="table table-bordered moretests">
+						<thead>
+							<tr>
+								<th>Test #</th>
+								<th>Test</th>
+								<th>Result</th>
+								<th>Success</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<h3>Load & Speed Tests</h3>
+					<table class="table table-bordered loadtests">
 						<thead>
 							<tr>
 								<th>Test #</th>
@@ -88,7 +106,7 @@
 					<div class="screenshotcontainer screenshotcontainer1"></div>
 				</div>
 				<div class="col-md-6">
-					<h4 class="screenshotcontainer">1.25 seconds after DOM Load</h4>
+					<h4 class="screenshotcontainer">2 seconds after DOM Load</h4>
 					<div class="screenshotcontainer screenshotcontainer2"></div>
 				</div>
 			</div>
@@ -120,26 +138,6 @@
 
 				$(".alert").remove();
 
-				// if ( data.member1.name.length <= 0 ) {
-				//   showFormError("You need to specify a name for Team Member 1");
-				//   return false;
-				// }
-
-				// if ( data.member1.email.length <= 0 ) {
-				//   showFormError("You need to supply an email for Team Member 1");
-				//   return false;
-				// }
-
-				// if ( data.member1.email.length && !emailCheck(data.member1.email) ) {
-				//   showFormError("Team member 1 must supply a uwaterloo.ca email");
-				//   return false;
-				// }
-
-				// if ( data.member2.email.length && !emailCheck(data.member2.email) ) {
-				//   showFormError("Team member 2 must supply a uwaterloo.ca email");
-				//   return false;
-				// }
-
 				$("#submitbtn").addClass("disabled").text("Testing...");
 
 				API.testCard(data, function(data){
@@ -151,63 +149,65 @@
 					}
 
 					$(".testresults").removeClass("hidden");
-					$(".testresults").find("tbody").html("");
+					$(".moretests, .loadtests").find("tbody").html("");
 					$(".screenshot").remove();
 
 					var count = 0;
 
 					if ( data.more && data.more.title ) {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Sidebar Title", data.more.title, true));
+						$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Title", data.more.title, true));
 					} else {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Sidebar Title", "", false));
+						$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Title", "", false));
 					}
 
 					if ( data.more && data.more.icon ) {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />", true));
+						$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />", true));
 					} else {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Sidebar Icon", "N/A", false));
+						$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Icon", "N/A", false));
 					}
 
 					if ( data.more && data.more.description ) {
-						$(".testresults").find("tbody").append(getTableRow(++count, "More Description", data.more.description, true));
+						$(".moretests").find("tbody").append(getTableRow(++count, "More Description", data.more.description, true));
 					} else {
-						$(".testresults").find("tbody").append(getTableRow(++count, "More Description", "No description found", false));
+						$(".moretests").find("tbody").append(getTableRow(++count, "More Description", "No description found", false));
 					}
 
 					if ( data.more && data.more.hostname ) {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Include In More", data.more.hostname, true));
+						$(".moretests").find("tbody").append(getTableRow(++count, "Include In More", data.more.hostname, true));
 					} else {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Include In More", "No kik-more tag found", false));
+						$(".moretests").find("tbody").append(getTableRow(++count, "Include In More", "No kik-more tag found", false));
 					}
 
 					if ( data.unsupported ) {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Unsupported OS", data.unsupported, true));
+						$(".moretests").find("tbody").append(getTableRow(++count, "Unsupported OS", data.unsupported, true));
 					} else {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Unsupported OS", "N/A", true));
+						$(".moretests").find("tbody").append(getTableRow(++count, "Unsupported OS", "N/A", true));
 					}
 
 					if ( data.link && data.link.terms ) {
-						$(".testresults").find("tbody").append(getTableRow(++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true));
+						$(".moretests").find("tbody").append(getTableRow(++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true));
 					} else {
-						//$(".testresults").find("tbody").append(getTableRow(++count, "T&C Not Provided", "", true));
+						$(".moretests").find("tbody").append(getTableRow(++count, "T&C Provided", "Not Provided", true));
 					}
 
 					if ( data.link && data.link.privacy ) {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true));
+						$(".moretests").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true));
 					} else {
-						//$(".testresults").find("tbody").append(getTableRow(++count, "Privacy Policy Not Provided", "", true));
+						$(".moretests").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "Not Provided", true));
 					}
 
+					count = 0;
+
 					if ( data.load && data.load.time ) {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Load Time", data.load.time + " ms", (data.load.time < 500 ? true : false)));
+						$(".loadtests").find("tbody").append(getTableRow(++count, "Load Time", data.load.time + " ms", (data.load.time < 500 ? true : false)));
 					}
 
 					if ( data.load && data.load.requestCount ) {
-						$(".testresults").find("tbody").append(getTableRow(++count, "# of Requests", data.load.requestCount, (data.load.requestCount < 50 ? true : false)));
+						$(".loadtests").find("tbody").append(getTableRow(++count, "# of Requests", data.load.requestCount, (data.load.requestCount < 50 ? true : false)));
 					}
 
 					if ( data.load && data.load.cardSize ) {
-						$(".testresults").find("tbody").append(getTableRow(++count, "Card Size", (data.load.cardSize/1000) + " kb", (data.load.cardSize < 200000 ? true : false)));
+						$(".loadtests").find("tbody").append(getTableRow(++count, "Card Size", (data.load.cardSize/1000) + " kb", (data.load.cardSize < 200000 ? true : false)));
 					}
 
 					if ( data.screenshot ) {
