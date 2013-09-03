@@ -2,10 +2,9 @@ var fs     = require('fs'),
 	page   = require('webpage').create(),
 	system = require('system');
 
-var url = "http://cards-image-search-dev.herokuapp.com",
-	beginTime = Date.now(),
+var beginTime = Date.now(),
 	logFilter = "#######CARDTESTER#######",
-	domLoadTime, fullLoadTime;
+	url, domLoadTime, fullLoadTime;
 
 if (system.args.length === 1) {
     console.log('Usage: card_verification.js <some URL>');
