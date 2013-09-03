@@ -215,8 +215,12 @@
 
 					count = 0;
 
-					if ( data.load && data.load.time ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "Load Time", data.load.time + " ms", (data.load.time < 500 ? true : false)));
+					if ( data.load && data.load.domLoad ) {
+						$(".loadtests").find("tbody").append(getTableRow(++count, "DOMContentLoaded", data.load.domLoad + " ms", (data.load.domLoad < 500 ? true : false)));
+					}
+
+					if ( data.load && data.load.fullLoad ) {
+						$(".loadtests").find("tbody").append(getTableRow(++count, "Full Load Time", data.load.fullLoad + " ms", (data.load.fullLoad < 500 ? true : false)));
 					}
 
 					if ( data.load && data.load.requestCount ) {
@@ -237,10 +241,6 @@
 					if ( data.load && data.load.resources ) {
 
 						data.load.resources.forEach(function(resource){
-
-							// console.log("------------------------");
-							// console.log(resource);
-							// console.log("------------------------");
 
 							if ( resource.startReply && resource.startReply.bodySize ) {
 								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", -1));

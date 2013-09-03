@@ -3,9 +3,9 @@ var fs     = require('fs'),
 	system = require('system');
 
 var url = "http://cards-image-search-dev.herokuapp.com",
-	t   = Date.now(),
-	tt  = Date.now(),
-	logFilter = "#######CARDTESTER#######";
+	beginTime = Date.now(),
+	logFilter = "#######CARDTESTER#######",
+	domLoadTime, fullLoadTime;
 
 if (system.args.length === 1) {
     console.log('Usage: card_verification.js <some URL>');
@@ -20,24 +20,16 @@ page.settings.clearMemoryCaches = true;
 page.settings.appCache = false;
 page.settings.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3";
 
-page.webSecurityEnabled = false;
-page.appCache = false;
-
-page.viewportSize = { width: 320, height : 548 };
 page.resources = [];
+page.appCache = false;
+page.webSecurityEnabled = false;
+page.viewportSize = { width: 320, height : 548 };
 
 page.onConsoleMessage = function (msg) {
 	if ( msg.indexOf(logFilter) === 0 ) {
     	console.log(msg.replace(logFilter, ""));
 	}
 };
-
-function printArgs() {
-    var i, ilen;
-    for (i = 0, ilen = arguments.length; i < ilen; ++i) {
-        //console.log("    arguments[" + i + "] = " + JSON.stringify(arguments[i]));
-    }
-}
 
 page.onInitialized = function() {
     //console.log("page.onInitialized");
@@ -50,16 +42,23 @@ page.onInitialized = function() {
 	});
 
 	page.evaluate(function(domContentLoadedMsg) {
-		document.addEventListener('load', function() {
+		window.addEventListener('load', function() {
 			window.callPhantom('load');
 		}, false);
 	});
 };
 
 page.onCallback = function(data) {
-	tt = Date.now() - tt;
-	//console.log('DOMContentLoaded' + data);
-	//console.log('Loading time ' + tt + ' msec');
+
+	var newDiff = Date.now() - beginTime;
+
+	if ( data === "DOMContentLoaded" ) {
+		//console.log('DOMContentLoaded time ' + newDiff + ' msec');
+		domLoadTime = newDiff;
+	} else if ( data === "load" ) {
+		//console.log('load time ' + newDiff + ' msec');
+		fullLoadTime = newDiff;
+	}
 };
 
 page.onLoadStarted = function() {
@@ -100,9 +99,11 @@ page.open(url, function (status) {
 
 	if (status !== 'success') {
         //console.log('FAIL to load the address');
+		// page.injectJs("inject1.js");
+		// page.injectJs("inject2.js");
     } else {
         //console.log('Page.open Loading time ' + loadTime + ' msec');
-        loadTime = Date.now() - t;
+        loadTime = Date.now() - beginTime;
     }
 
 	var cardReport = {
@@ -110,7 +111,9 @@ page.open(url, function (status) {
 			includeInMore: false
 		},
 		load: {
-			time: loadTime
+			time: loadTime,
+			domLoad: domLoadTime,
+			fullLoad: fullLoadTime
 		},
 		link: {
 		}
@@ -189,7 +192,7 @@ page.open(url, function (status) {
 		
 		cardReport.screenshot2 = generateDataURL(page.renderBase64());
 		
-		worstHackEver(2000);
+		worstHackEver(1000);
 
 		console.log(logFilter + JSON.stringify(cardReport));
 
@@ -207,3 +210,10 @@ page.open(url, function (status) {
 		return "data:image/png;base64," + data;
 	}
 });
+
+function printArgs() {
+    var i, ilen;
+    for (i = 0, ilen = arguments.length; i < ilen; ++i) {
+        //console.log("    arguments[" + i + "] = " + JSON.stringify(arguments[i]));
+    }
+}
