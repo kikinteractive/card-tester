@@ -144,6 +144,8 @@
 			$("form").submit(function(d){
 
 				var data = $("#cardurl").val();
+				
+				$(".alert").remove();
 
 				if ( data.indexOf("http") != 0 ) {
 
@@ -152,8 +154,6 @@
 				}
 
 				localStorage["lastURL"] = data;
-
-				$(".alert").remove();
 
 				$("#submitbtn").addClass("disabled").text("Testing...");
 
