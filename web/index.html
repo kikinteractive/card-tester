@@ -101,6 +101,23 @@
 				</div>
 			</div>
 			<div class="row">
+				<div class="col-md-12">
+					<h3>Requests</h3>
+					<table class="table table-bordered requests">
+						<thead>
+							<tr>
+								<th>Request #</th>
+								<th>URL</th>
+								<th>Size</th>
+								<th>Response Code</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="row">
 				<div class="col-md-6">
 					<h4 class="screenshotcontainer">Right after DOM Load</h4>
 					<div class="screenshotcontainer screenshotcontainer1"></div>
@@ -149,7 +166,7 @@
 					}
 
 					$(".testresults").removeClass("hidden");
-					$(".moretests, .loadtests").find("tbody").html("");
+					$(".moretests, .loadtests, .requests").find("tbody").html("");
 					$(".screenshot").remove();
 
 					var count = 0;
@@ -214,6 +231,20 @@
 						$(".screenshotcontainer1").append("<img class='screenshot img-thumbnail' src='" + data.screenshot + "' />");
 						$(".screenshotcontainer2").append("<img class='screenshot img-thumbnail' src='" + data.screenshot2 + "' />");
 					}
+
+					count = 0;
+
+					if ( data.load && data.load.resources ) {
+
+						data.load.resources.forEach(function(resource){
+
+							// console.log("------------------------");
+							// console.log(resource);
+							// console.log("------------------------");
+
+							$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, "", -1));
+						});
+					}
 				});
 
 				return false;
@@ -223,10 +254,14 @@
 
 				var html = [];
 
-				if ( !success ) {
-					html.push("<tr class='danger'>");
-				} else {
+				if ( success ) {
 					html.push("<tr class='success'>");
+				} else {
+					if ( success != -1 ) {
+						html.push("<tr class='danger'>");
+					} else {
+						html.push("<tr class=''>");
+					}
 				}
 
 				html.push("<td>");

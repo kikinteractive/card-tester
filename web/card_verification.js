@@ -16,6 +16,7 @@ if (system.args.length === 1) {
 
 page.settings.localToRemoteUrlAccessEnabled = true;
 page.settings.webSecurityEnabled = false;
+page.settings.clearMemoryCaches = true;
 page.settings.appCache = false;
 page.settings.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3";
 
@@ -122,8 +123,9 @@ page.open(url, function (status) {
 
 	page.resources.forEach(function (resource) {
 		if ( !resource.request.url.match(/(^data:image\/.*)/i) ) {
-			resources.push(resource.request.url);
-			
+
+			resources.push(resource);
+
 			if ( resource.startReply ) {
 				//console.log(JSON.stringify(resource.startReply));
 				size += resource.startReply.bodySize;
