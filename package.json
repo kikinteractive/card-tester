@@ -6,8 +6,7 @@
     "npm"  : "1.1.x"
   },
   "dependencies" : {
-    "zerver"       : "0.12.9",
-    "node-phantom" : "x.x"
+    "zerver"       : "0.12.9"
   },
   "scripts" : {
     "start" : "zerver --manifest=cache.manifest web"
