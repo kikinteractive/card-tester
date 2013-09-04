@@ -38,7 +38,6 @@ page.onInitialized = function() {
 	page.evaluate(function(domContentLoadedMsg) {
 		document.addEventListener('DOMContentLoaded', function() {
 			window.callPhantom('DOMContentLoaded');
-			domLoaded = true;
 		}, false);
 	});
 
@@ -54,12 +53,13 @@ page.onCallback = function(data) {
 	var newDiff = Date.now() - beginTime;
 
 	if ( data === "DOMContentLoaded" ) {
-		//console.log('DOMContentLoaded time ' + newDiff + ' msec');
 		domLoadTime = newDiff;
+		domLoaded = true;
 	} else if ( data === "load" ) {
-		//console.log('load time ' + newDiff + ' msec');
 		fullLoadTime = newDiff;
 	}
+
+	//console.log(data + ' time ' + newDiff + ' msec');
 };
 
 page.onLoadStarted = function() {

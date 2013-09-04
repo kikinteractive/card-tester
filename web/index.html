@@ -246,9 +246,9 @@
 						data.load.resources.forEach(function(resource){
 
 							if ( resource.startReply && resource.startReply.bodySize ) {
-								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", resource.domLoaded));
+								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", !resource.domLoaded));
 							} else {
-								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, "", resource.domLoaded));
+								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, "", !resource.domLoaded));
 							}
 						});
 					}
