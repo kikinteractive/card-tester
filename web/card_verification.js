@@ -19,6 +19,7 @@ page.settings.webSecurityEnabled = false;
 page.settings.clearMemoryCaches = true;
 page.settings.appCache = false;
 page.settings.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3";
+page.settings.userAgent = "Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30";
 
 page.resources = [];
 page.appCache = false;
@@ -210,7 +211,7 @@ page.open(url, function (status) {
 
 	var start = new Date().getTime();
 
-	worstHackEver(3000);
+	worstHackEver(2000);
 
 	setTimeout(function(){
 		

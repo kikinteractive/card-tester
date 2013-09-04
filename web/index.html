@@ -249,10 +249,14 @@
 
 						data.load.resources.forEach(function(resource){
 
+							if ( resource.request.url.indexOf("card://") >= 0 || resource.request.url.indexOf("cards://") >= 0 ) {
+								return;
+							}
+
 							if ( resource.startReply && resource.startReply.bodySize ) {
-								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", resource.domLoaded));
+								$(".requests").find("tbody").append(getRequestRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", resource.domLoaded));
 							} else {
-								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, "", resource.domLoaded));
+								$(".requests").find("tbody").append(getRequestRow(++count, resource.request.url, "", resource.domLoaded));
 							}
 						});
 					}
@@ -300,10 +304,14 @@
 
 				var html = [];
 
-				if ( success ) {
-					html.push("<tr class='danger'>");
+				if ( testname.indexOf(".manifest") >= 0 ) {
+					html.push("<tr class='active'>");
 				} else {
-					html.push("<tr class='success'>");
+					if ( success ) {
+						html.push("<tr class='success'>");
+					} else {
+						html.push("<tr class='danger'>");
+					}
 				}
 
 				html.push("<td>");
