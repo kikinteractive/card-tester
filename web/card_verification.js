@@ -112,7 +112,8 @@ page.open(url, function (status) {
 
 	var cardReport = {
 		more: {
-			includeInMore: false
+			includeInMore: false,
+			tagLocations: {}
 		},
 		load: {
 			time: loadTime,
@@ -131,37 +132,47 @@ page.open(url, function (status) {
 
 	cardReport = page.evaluate(function (cardReport, logFilter) {
 
-		var metaTags = document.head.childNodes;
+		var metaTags = document.querySelectorAll("meta");
 
 		for (var i = 0; i < metaTags.length; i++) {
+			
 			var tag = metaTags[i];
 
-			if ( tag.tagName == "META" || tag.tagName == "LINK" ) {
+			if ((tag.name === "description") && (tag.content || '').trim()) {
+				cardReport.more.description = tag.content;
+				cardReport.more.tagLocations["description"] = (tag.parentNode === document.head);
+			}
 
-				if ((tag.rel === "kik-icon") && (tag.href || '').trim()) {
-					cardReport.more.icon = tag.href;
-				}
+			if ((tag.name === "kik-more") && (tag.content || '').trim()) {
+				cardReport.more.includeInMore = true;
+				cardReport.more.hostname = tag.content;
+				cardReport.more.tagLocations["kik-more"] = (tag.parentNode === document.head);
+			}
 
-				if ((tag.name === "description") && (tag.content || '').trim()) {
-					cardReport.more.description = tag.content;
-				}
+			if ((tag.name === "kik-unsupported") && (tag.content || '').trim()) {
+				cardReport.unsupported = tag.content;
+				cardReport.more.tagLocations["kik-unsupported"] = (tag.parentNode === document.head);
+			}
+		}
 
-				if ((tag.name === "kik-more") && (tag.content || '').trim()) {
-					cardReport.more.includeInMore = true;
-					cardReport.more.hostname = tag.content;
-				}
+		var linkTags = document.querySelectorAll("link");
 
-				if ((tag.name === "kik-unsupported") && (tag.content || '').trim()) {
-					cardReport.unsupported = tag.content;
-				}
+		for (var j = 0; j < linkTags.length; j++) {
+			var tag = linkTags[j];
 
-				if ((tag.rel === "privacy") && (tag.href || '').trim()) {
-					cardReport.link.privacy = tag.href;
-				}
+			if ((tag.rel === "kik-icon") && (tag.href || '').trim()) {
+				cardReport.more.icon = tag.href;
+				cardReport.more.tagLocations["kik-icon"] = (tag.parentNode === document.head);
+			}
 
-				if ((tag.rel === "terms") && (tag.href || '').trim()) {
-					cardReport.link.terms = tag.href;
-				}
+			if ((tag.rel === "privacy") && (tag.href || '').trim()) {
+				cardReport.link.privacy = tag.href;
+				cardReport.more.tagLocations["privacy"] = (tag.parentNode === document.head);
+			}
+
+			if ((tag.rel === "terms") && (tag.href || '').trim()) {
+				cardReport.link.terms = tag.href;
+				cardReport.more.tagLocations["terms"] = (tag.parentNode === document.head);
 			}
 		}
 

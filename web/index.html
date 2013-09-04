@@ -171,43 +171,71 @@
 					var count = 0;
 
 					if ( data.more && data.more.title ) {
-						$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Title", data.more.title, true));
+						if ( data.more.tagLocations['kik-more'] === false ) {
+							$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Title", data.more.title + " (Not in document HEAD)", -1));
+						} else {
+							$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Title", data.more.title, true));
+						}
 					} else {
 						$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Title", "", false));
 					}
 
 					if ( data.more && data.more.icon ) {
-						$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />", true));
+						if ( data.more.tagLocations['kik-icon'] === false ) {
+							$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />" + " (Not in document HEAD)", -1));
+						} else {
+							$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />", true));
+						}
 					} else {
 						$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Icon", "N/A", false));
 					}
 
 					if ( data.more && data.more.description ) {
-						$(".moretests").find("tbody").append(getTableRow(++count, "More Description", data.more.description, true));
+						if ( data.more.tagLocations['description'] === false ) {
+							$(".moretests").find("tbody").append(getTableRow(++count, "More Description", data.more.description + " (Not in document HEAD)", -1));
+						} else {
+							$(".moretests").find("tbody").append(getTableRow(++count, "More Description", data.more.description, true));
+						}
 					} else {
 						$(".moretests").find("tbody").append(getTableRow(++count, "More Description", "No description found", false));
 					}
 
 					if ( data.more && data.more.hostname ) {
-						$(".moretests").find("tbody").append(getTableRow(++count, "Include In More", data.more.hostname, true));
+						if ( data.more.tagLocations['kik-icon'] === false ) {
+							$(".moretests").find("tbody").append(getTableRow(++count, "Include In More", data.more.hostname + " (Not in document HEAD)", -1));
+						} else {
+							$(".moretests").find("tbody").append(getTableRow(++count, "Include In More", data.more.hostname, true));
+						}
 					} else {
 						$(".moretests").find("tbody").append(getTableRow(++count, "Include In More", "No kik-more tag found", false));
 					}
 
 					if ( data.unsupported ) {
-						$(".moretests").find("tbody").append(getTableRow(++count, "Unsupported OS", data.unsupported, true));
+						if ( data.more.tagLocations['kik-icon'] === false ) {
+							$(".moretests").find("tbody").append(getTableRow(++count, "Unsupported OS", data.unsupported + " (Not in document HEAD)", -1));
+						} else {
+							$(".moretests").find("tbody").append(getTableRow(++count, "Unsupported OS", data.unsupported, true));
+						}
 					} else {
 						$(".moretests").find("tbody").append(getTableRow(++count, "Unsupported OS", "N/A", true));
 					}
 
 					if ( data.link && data.link.terms ) {
-						$(".moretests").find("tbody").append(getTableRow(++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true));
+						if ( data.more.tagLocations['kik-icon'] === false ) {
+							$(".moretests").find("tbody").append(getTableRow(++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>" + " (Not in document HEAD)", -1));
+						} else {
+							$(".moretests").find("tbody").append(getTableRow(++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true));
+						}
 					} else {
 						$(".moretests").find("tbody").append(getTableRow(++count, "T&C Provided", "Not Provided", true));
 					}
 
 					if ( data.link && data.link.privacy ) {
-						$(".moretests").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true));
+						if ( data.more.tagLocations['kik-icon'] === false ) {
+							$(".moretests").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>" + " (Not in document HEAD)", -1));
+						} else {
+							$(".moretests").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true));
+						}
 					} else {
 						$(".moretests").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "Not Provided", true));
 					}
@@ -269,10 +297,14 @@
 
 				var html = [];
 
-				if ( success ) {
+				if ( success === true ) {
 					html.push("<tr class='success'>");
 				} else {
-					html.push("<tr class='danger'>");
+					if ( success === -1 ) {
+						html.push("<tr class='warning'>");
+					} else {
+						html.push("<tr class='danger'>");
+					}
 				}
 
 				html.push("<td>");
@@ -293,7 +325,11 @@
 
 				html.push("</td>");
 				html.push("<td>");
-				html.push(success);
+				if ( success === -1 ) {
+					html.push("Warn");
+				} else {
+					html.push(success===true?"Yes":"No");
+				}
 				html.push("</td>");
 				html.push("</tr>");
 
