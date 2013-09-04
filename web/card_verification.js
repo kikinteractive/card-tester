@@ -174,6 +174,7 @@ page.open(url, function (status) {
 
 	var resources = [];
 	var size = 0;
+	var fullSize = 0;
 
 	page.resources.forEach(function (resource) {
 
@@ -181,9 +182,13 @@ page.open(url, function (status) {
 
 			resources.push(resource);
 
-			if ( resource.startReply && !resource.domLoaded ) {
-				//console.log(JSON.stringify(resource.startReply));
-				size += resource.startReply.bodySize;
+			if ( resource.startReply ) {
+				if ( !resource.domLoaded ) {
+					size += resource.startReply.bodySize;
+					fullSize += resource.startReply.bodySize;
+				} else {
+					fullSize += resource.startReply.bodySize;
+				}
 			}
 		}
 
@@ -201,12 +206,13 @@ page.open(url, function (status) {
 	cardReport.load.resources = resources;
 	cardReport.load.requestCount = resources.length;
 	cardReport.load.cardSize = size;
+	cardReport.load.fullSize = fullSize;
 
 	var start = new Date().getTime();
 
-	worstHackEver(2000);
+	worstHackEver(3000);
 
-	setTimeout(function(){
+	//setTimeout(function(){
 		
 		cardReport.screenshot2 = generateDataURL(page.renderBase64());
 		
@@ -216,7 +222,7 @@ page.open(url, function (status) {
 
 		phantom.exit();
 
-	}, 4250);
+	//}, 4250);
 
 	function worstHackEver(time) {
 		while ( (new Date().getTime()) - start < time ) {

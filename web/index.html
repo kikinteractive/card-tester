@@ -231,7 +231,11 @@
 					}
 
 					if ( data.load && data.load.cardSize ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "Card Size", (data.load.cardSize/1000) + " kb", (data.load.cardSize < 350000 ? true : false)));
+						$(".loadtests").find("tbody").append(getTableRow(++count, "Card Size - Before DOMLoad", (data.load.cardSize/1000) + " kb", (data.load.cardSize < 350000 ? true : false)));
+					}
+
+					if ( data.load && data.load.fullSize ) {
+						$(".loadtests").find("tbody").append(getTableRow(++count, "Card Size - All Requests", (data.load.fullSize/1000) + " kb", (data.load.fullSize < 500000 ? true : false)));
 					}
 
 					if ( data.screenshot ) {
