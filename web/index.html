@@ -246,9 +246,9 @@
 						data.load.resources.forEach(function(resource){
 
 							if ( resource.startReply && resource.startReply.bodySize ) {
-								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", !resource.domLoaded));
+								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", resource.domLoaded));
 							} else {
-								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, "", !resource.domLoaded));
+								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, "", resource.domLoaded));
 							}
 						});
 					}
@@ -264,11 +264,42 @@
 				if ( success ) {
 					html.push("<tr class='success'>");
 				} else {
-					if ( success != -1 ) {
-						html.push("<tr class='danger'>");
-					} else {
-						html.push("<tr class=''>");
-					}
+					html.push("<tr class='danger'>");
+				}
+
+				html.push("<td>");
+				html.push(id);
+				html.push("</td>");
+
+				html.push("<td>");
+				html.push(testname);
+				html.push("</td>");
+
+				html.push("<td>");
+
+				if ( value != 0 ) {
+					html.push(value);
+				} else {
+					html.push("N/A");
+				}
+
+				html.push("</td>");
+				html.push("<td>");
+				html.push(success);
+				html.push("</td>");
+				html.push("</tr>");
+
+				return html.join("");
+			}
+
+			function getRequestRow(id, testname, value, success) {
+
+				var html = [];
+
+				if ( success ) {
+					html.push("<tr class='danger'>");
+				} else {
+					html.push("<tr class='success'>");
 				}
 
 				html.push("<td>");
@@ -289,11 +320,9 @@
 
 				html.push("</td>");
 
-				if ( success != -1 ) {
-					html.push("<td>");
-					html.push(success);
-					html.push("</td>");
-				}
+				html.push("<td>");
+				html.push(success);
+				html.push("</td>");
 
 				html.push("</tr>");
 

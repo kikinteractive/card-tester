@@ -124,25 +124,6 @@ page.open(url, function (status) {
 	
     cardReport.screenshot = generateDataURL(page.renderBase64());
 
-	var resources = [];
-	var size = 0;
-
-	page.resources.forEach(function (resource) {
-		if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^http:\/\/cardsbridge.kik.com\/.*)/i)) {
-
-			resources.push(resource);
-
-			if ( resource.startReply ) {
-				//console.log(JSON.stringify(resource.startReply));
-				size += resource.startReply.bodySize;
-			}
-		}
-	});
-
-	cardReport.load.resources = resources;
-	cardReport.load.requestCount = resources.length;
-	cardReport.load.cardSize = size;
-
 	cardReport.more.title = page.evaluate(function(cardReport) {
 		return document.title;
 	});
@@ -190,7 +171,26 @@ page.open(url, function (status) {
 	cardReport.load.manifest = page.evaluate(function(){
 		return document.querySelectorAll('html')[0].getAttribute("manifest");
 	});
-	
+
+	var resources = [];
+	var size = 0;
+
+	page.resources.forEach(function (resource) {
+		if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^http:\/\/cardsbridge.kik.com\/.*)/i)) {
+
+			resources.push(resource);
+
+			if ( resource.startReply && !resource.domLoaded ) {
+				//console.log(JSON.stringify(resource.startReply));
+				size += resource.startReply.bodySize;
+			}
+		}
+	});
+
+	cardReport.load.resources = resources;
+	cardReport.load.requestCount = resources.length;
+	cardReport.load.cardSize = size;
+
 	var start = new Date().getTime();
 
 	worstHackEver(2000);
