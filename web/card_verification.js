@@ -124,7 +124,7 @@ page.open(url, function (status) {
 	
     cardReport.screenshot = generateDataURL(page.renderBase64());
 
-	cardReport.more.title = page.evaluate(function(cardReport) {
+	cardReport.more.title = page.evaluate(function() {
 		return document.title;
 	});
 
@@ -176,7 +176,8 @@ page.open(url, function (status) {
 	var size = 0;
 
 	page.resources.forEach(function (resource) {
-		if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^http:\/\/cardsbridge.kik.com\/.*)/i)) {
+
+		if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^http:\/\/cardsbridge.kik.com\/.*)/i) && isFirstFetch(resource.request.url) ) {
 
 			resources.push(resource);
 
@@ -184,6 +185,16 @@ page.open(url, function (status) {
 				//console.log(JSON.stringify(resource.startReply));
 				size += resource.startReply.bodySize;
 			}
+		}
+
+		function isFirstFetch(url) {
+			resources.forEach(function(r){
+				if( r.request.url === url ) {
+					return false;
+				}
+			});
+
+			return true;
 		}
 	});
 

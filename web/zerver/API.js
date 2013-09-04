@@ -32,6 +32,6 @@ function testCard(url, callback) {
     });
 
 	phantomjs.on('exit', function (code) {
-		console.log('Child process exited with exit code '+code+' for card url: ' + url);
+		console.log('Child process exited with exit code ' + code + ' for card url: ' + url);
 	});
 }
