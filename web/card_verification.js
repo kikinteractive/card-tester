@@ -194,7 +194,7 @@ page.open(url, function (status) {
 
 		function isFirstFetch(url) {
 			resources.forEach(function(r){
-				if( r.request.url === url ) {
+				if( r.request.url == url ) {
 					return false;
 				}
 			});
