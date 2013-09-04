@@ -4,6 +4,7 @@ var fs     = require('fs'),
 
 var beginTime = Date.now(),
 	logFilter = "#######CARDTESTER#######",
+	domLoaded = false,
 	url, domLoadTime, fullLoadTime;
 
 if (system.args.length === 1) {
@@ -37,6 +38,7 @@ page.onInitialized = function() {
 	page.evaluate(function(domContentLoadedMsg) {
 		document.addEventListener('DOMContentLoaded', function() {
 			window.callPhantom('DOMContentLoaded');
+			domLoaded = true;
 		}, false);
 	});
 
@@ -77,6 +79,8 @@ page.onResourceRequested = function (req) {
 		startReply: null,
 		endReply: null
 	};
+
+	page.resources[req.id].domLoaded = domLoaded;
 };
 
 page.onResourceReceived = function (res) {
@@ -124,7 +128,7 @@ page.open(url, function (status) {
 	var size = 0;
 
 	page.resources.forEach(function (resource) {
-		if ( !resource.request.url.match(/(^data:image\/.*)/i) ) {
+		if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^http:\/\/cardsbridge.kik.com\/.*)/i)) {
 
 			resources.push(resource);
 
@@ -182,6 +186,10 @@ page.open(url, function (status) {
 		return cardReport;
 
 	}, cardReport, logFilter);
+
+	cardReport.load.manifest = page.evaluate(function(){
+		return document.querySelectorAll('html')[0].getAttribute("manifest");
+	});
 	
 	var start = new Date().getTime();
 

@@ -107,7 +107,7 @@
 								<th>Request #</th>
 								<th>URL</th>
 								<th>Size</th>
-								<!-- <th>Response Code</th> -->
+								<th>DOMLoaded</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -214,6 +214,10 @@
 
 					count = 0;
 
+					if ( data.load ) {
+						$(".loadtests").find("tbody").append(getTableRow(++count, "Cache Manifest", data.load.manifest ? data.load.manifest : "No manifest found", data.load.manifest ? true : false));
+					}
+
 					if ( data.load && data.load.domLoad ) {
 						$(".loadtests").find("tbody").append(getTableRow(++count, "DOMContentLoaded", data.load.domLoad + " ms", (data.load.domLoad < 1250 ? true : false)));
 					}
@@ -242,9 +246,9 @@
 						data.load.resources.forEach(function(resource){
 
 							if ( resource.startReply && resource.startReply.bodySize ) {
-								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", -1));
+								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", resource.domLoaded));
 							} else {
-								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, "", -1));
+								$(".requests").find("tbody").append(getTableRow(++count, resource.request.url, "", resource.domLoaded));
 							}
 						});
 					}
