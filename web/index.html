@@ -166,7 +166,7 @@
 
 					if ( data.more && data.more.title ) {
 						if ( data.more.tagLocations['kik-more'] === false ) {
-							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title + " (Not in document HEAD)", -1);
+							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title, true);
 						}
@@ -176,7 +176,7 @@
 
 					if ( data.more && data.more.icon ) {
 						if ( data.more.tagLocations['kik-icon'] === false ) {
-							getTableRow(".moretests", ++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />" + " (Not in document HEAD)", -1);
+							getTableRow(".moretests", ++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />" + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />", true);
 						}
@@ -186,7 +186,7 @@
 
 					if ( data.more && data.more.description ) {
 						if ( data.more.tagLocations['description'] === false ) {
-							getTableRow(".moretests", ++count, "More Description", data.more.description + " (Not in document HEAD)", -1);
+							getTableRow(".moretests", ++count, "More Description", data.more.description + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "More Description", data.more.description, true);
 						}
@@ -196,7 +196,7 @@
 
 					if ( data.more && data.more.hostname ) {
 						if ( data.more.tagLocations['kik-icon'] === false ) {
-							getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " (Not in document HEAD)", -1);
+							getTableRow(".moretests", ++count, "Include In More", data.more.hostname + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "Include In More", data.more.hostname, true);
 						}
@@ -206,7 +206,7 @@
 
 					if ( data.unsupported ) {
 						if ( data.more.tagLocations['kik-icon'] === false ) {
-							getTableRow(".moretests", ++count, "Unsupported OS", data.unsupported + " (Not in document HEAD)", -1);
+							getTableRow(".moretests", ++count, "Unsupported OS", data.unsupported + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "Unsupported OS", data.unsupported, true);
 						}
@@ -216,7 +216,7 @@
 
 					if ( data.link && data.link.terms ) {
 						if ( data.more.tagLocations['kik-icon'] === false ) {
-							getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>" + " (Not in document HEAD)", -1);
+							getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>" + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true);
 						}
@@ -226,7 +226,7 @@
 
 					if ( data.link && data.link.privacy ) {
 						if ( data.more.tagLocations['kik-icon'] === false ) {
-							getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>" + " (Not in document HEAD)", -1);
+							getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>" + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true);
 						}
@@ -237,13 +237,13 @@
 					if ( data.layout && (data.layout.topbar_android == 48) ) {
 						getTableRow(".moretests", ++count, "Topbar Height - Android", "Topbar is " + data.layout.topbar_android + "px", true);
 					} else {
-						getTableRow(".moretests", ++count, "Topbar Height - Android", "Topbar is " + data.layout.topbar_android + "px", -1);
+						getTableRow(".moretests", ++count, "Topbar Height - Android", "Couldn't get height", -1);
 					}
 
 					if ( data.layout && (data.layout.topbar_ios == 44) ) {
 						getTableRow(".moretests", ++count, "Topbar Height - iOS", "Topbar is " + data.layout.topbar_ios + "px", true);
 					} else {
-						getTableRow(".moretests", ++count, "Topbar Height - iOS", "Topbar is " + data.layout.topbar_ios + "px", -1);
+						getTableRow(".moretests", ++count, "Topbar Height - iOS", "Couldn't get height", -1);
 					}
 
 					count = 0;
@@ -258,19 +258,18 @@
 
 						data.load.resources.forEach(function(resource){
 
-							if ( resource.request.url.indexOf("card://") >= 0 || resource.request.url.indexOf("cards://") >= 0 ) {
+							if ( resource.request.url.indexOf("card://") >= 0 || resource.request.url.indexOf("cards://") >= 0 || resource.request.url.indexOf(".manifest") >= 0 ) {
 								return;
 							}
 
 							if ( resource.domLoaded === false ) {
 								requestCount++;
-								console.log(resource.request.url);
 							}
 						});
 
 						var blocksLoad = (requestCount > 1 ? false : true);
 
-						getTableRow(".loadtests", ++count, "Blocks DOM Load", (requestCount-1) > 0 ? (requestCount-1) + " extra requests" : "", blocksLoad);
+						getTableRow(".loadtests", ++count, "Blocks DOM Load", requestCount > 0 ? requestCount + " extra requests" : "", blocksLoad);
 					}
 
 					if ( data.load && data.load.domLoad ) {
