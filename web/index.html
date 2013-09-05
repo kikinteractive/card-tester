@@ -11,19 +11,13 @@
 	<title>Card Testing Service</title>
 
 	<link href="css/bootstrap.css" rel="stylesheet">
-	<link href="css/kikcup.css" rel="stylesheet">
+	<link href="css/tester.css" rel="stylesheet">
 
 	<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!--[if lt IE 9]>
 	  <script src="../../assets/js/html5shiv.js"></script>
 	  <script src="../../assets/js/respond.min.js"></script>
 	  <![endif]-->
-
-<style type="text/css">
-	.screenshotcontainer {
-		text-align: center;
-	}
-</style>
 
 	</head>
 
@@ -40,7 +34,7 @@
 			<div class="row">
 				<div class="col-md-4">
 					<h1>Card Testing Service</h1>
-					<p>This server automates some of the repetitive tasks that must be checked before a card can be included in the More Card.</p>
+					<p>This service helps automates some of the simple checks that must be performed before a card can be considered for the More Card.</p>
 				</div>
 				<div class="col-md-8">
 					<br/><br/>
@@ -83,7 +77,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					<h3>Load & Speed Tests</h3>
+					<h3>Load &amp; Speed Tests</h3>
 					<table class="table table-bordered loadtests">
 						<thead>
 							<tr>
@@ -172,98 +166,131 @@
 
 					if ( data.more && data.more.title ) {
 						if ( data.more.tagLocations['kik-more'] === false ) {
-							$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Title", data.more.title + " (Not in document HEAD)", -1));
+							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title + " (Not in document HEAD)", -1);
 						} else {
-							$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Title", data.more.title, true));
+							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title, true);
 						}
 					} else {
-						$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Title", "", false));
+						getTableRow(".moretests", ++count, "Sidebar Title", "", false);
 					}
 
 					if ( data.more && data.more.icon ) {
 						if ( data.more.tagLocations['kik-icon'] === false ) {
-							$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />" + " (Not in document HEAD)", -1));
+							getTableRow(".moretests", ++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />" + " (Not in document HEAD)", -1);
 						} else {
-							$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />", true));
+							getTableRow(".moretests", ++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />", true);
 						}
 					} else {
-						$(".moretests").find("tbody").append(getTableRow(++count, "Sidebar Icon", "N/A", false));
+						getTableRow(".moretests", ++count, "Sidebar Icon", "N/A", false);
 					}
 
 					if ( data.more && data.more.description ) {
 						if ( data.more.tagLocations['description'] === false ) {
-							$(".moretests").find("tbody").append(getTableRow(++count, "More Description", data.more.description + " (Not in document HEAD)", -1));
+							getTableRow(".moretests", ++count, "More Description", data.more.description + " (Not in document HEAD)", -1);
 						} else {
-							$(".moretests").find("tbody").append(getTableRow(++count, "More Description", data.more.description, true));
+							getTableRow(".moretests", ++count, "More Description", data.more.description, true);
 						}
 					} else {
-						$(".moretests").find("tbody").append(getTableRow(++count, "More Description", "No description found", false));
+						getTableRow(".moretests", ++count, "More Description", "No description found", false);
 					}
 
 					if ( data.more && data.more.hostname ) {
 						if ( data.more.tagLocations['kik-icon'] === false ) {
-							$(".moretests").find("tbody").append(getTableRow(++count, "Include In More", data.more.hostname + " (Not in document HEAD)", -1));
+							getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " (Not in document HEAD)", -1);
 						} else {
-							$(".moretests").find("tbody").append(getTableRow(++count, "Include In More", data.more.hostname, true));
+							getTableRow(".moretests", ++count, "Include In More", data.more.hostname, true);
 						}
 					} else {
-						$(".moretests").find("tbody").append(getTableRow(++count, "Include In More", "No kik-more tag found", false));
+						getTableRow(".moretests", ++count, "Include In More", "No kik-more tag found", false);
 					}
 
 					if ( data.unsupported ) {
 						if ( data.more.tagLocations['kik-icon'] === false ) {
-							$(".moretests").find("tbody").append(getTableRow(++count, "Unsupported OS", data.unsupported + " (Not in document HEAD)", -1));
+							getTableRow(".moretests", ++count, "Unsupported OS", data.unsupported + " (Not in document HEAD)", -1);
 						} else {
-							$(".moretests").find("tbody").append(getTableRow(++count, "Unsupported OS", data.unsupported, true));
+							getTableRow(".moretests", ++count, "Unsupported OS", data.unsupported, true);
 						}
 					} else {
-						$(".moretests").find("tbody").append(getTableRow(++count, "Unsupported OS", "N/A", true));
+						getTableRow(".moretests", ++count, "Unsupported OS", "N/A", true);
 					}
 
 					if ( data.link && data.link.terms ) {
 						if ( data.more.tagLocations['kik-icon'] === false ) {
-							$(".moretests").find("tbody").append(getTableRow(++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>" + " (Not in document HEAD)", -1));
+							getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>" + " (Not in document HEAD)", -1);
 						} else {
-							$(".moretests").find("tbody").append(getTableRow(++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true));
+							getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true);
 						}
 					} else {
-						$(".moretests").find("tbody").append(getTableRow(++count, "T&C Provided", "Not Provided", true));
+						getTableRow(".moretests", ++count, "T&C Provided", "Not Provided", true);
 					}
 
 					if ( data.link && data.link.privacy ) {
 						if ( data.more.tagLocations['kik-icon'] === false ) {
-							$(".moretests").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>" + " (Not in document HEAD)", -1));
+							getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>" + " (Not in document HEAD)", -1);
 						} else {
-							$(".moretests").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true));
+							getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true);
 						}
 					} else {
-						$(".moretests").find("tbody").append(getTableRow(++count, "Privacy Policy Provided", "Not Provided", true));
+						getTableRow(".moretests", ++count, "Privacy Policy Provided", "Not Provided", true);
+					}
+
+					if ( data.layout && (data.layout.topbar_android == 48) ) {
+						getTableRow(".moretests", ++count, "Topbar Height - Android", "Topbar is " + data.layout.topbar_android + "px", true);
+					} else {
+						getTableRow(".moretests", ++count, "Topbar Height - Android", "Topbar is " + data.layout.topbar_android + "px", -1);
+					}
+
+					if ( data.layout && (data.layout.topbar_ios == 44) ) {
+						getTableRow(".moretests", ++count, "Topbar Height - iOS", "Topbar is " + data.layout.topbar_ios + "px", true);
+					} else {
+						getTableRow(".moretests", ++count, "Topbar Height - iOS", "Topbar is " + data.layout.topbar_ios + "px", -1);
 					}
 
 					count = 0;
 
 					if ( data.load ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "Cache Manifest", data.load.manifest ? data.load.manifest : "No manifest found", data.load.manifest ? true : false));
+						getTableRow(".loadtests", ++count, "Cache Manifest", data.load.manifest ? data.load.manifest : "No manifest found", data.load.manifest ? true : false);
+					}
+
+					if ( data.load ) {
+
+						var requestCount = 0;
+
+						data.load.resources.forEach(function(resource){
+
+							if ( resource.request.url.indexOf("card://") >= 0 || resource.request.url.indexOf("cards://") >= 0 ) {
+								return;
+							}
+
+							if ( resource.domLoaded === false ) {
+								requestCount++;
+								console.log(resource.request.url);
+							}
+						});
+
+						var blocksLoad = (requestCount > 1 ? false : true);
+
+						getTableRow(".loadtests", ++count, "Blocks DOM Load", (requestCount-1) > 0 ? (requestCount-1) + " extra requests" : "", blocksLoad);
 					}
 
 					if ( data.load && data.load.domLoad ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "DOMContentLoaded", data.load.domLoad + " ms", (data.load.domLoad < 1250 ? true : false)));
+						getTableRow(".loadtests", ++count, "DOMContentLoaded", data.load.domLoad + " ms", (data.load.domLoad < 1250 ? true : false));
 					}
 
 					if ( data.load && data.load.fullLoad ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "Full Load Time", data.load.fullLoad + " ms", (data.load.fullLoad < 1250 ? true : false)));
+						getTableRow(".loadtests", ++count, "Full Load Time", data.load.fullLoad + " ms", (data.load.fullLoad < 1250 ? true : false));
 					}
 
 					if ( data.load && data.load.requestCount ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "# of Requests", data.load.requestCount, (data.load.requestCount < 50 ? true : false)));
+						getTableRow(".loadtests", ++count, "# of Requests", data.load.requestCount, (data.load.requestCount < 50 ? true : false));
 					}
 
-					if ( data.load && data.load.cardSize ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "Card Size - Before DOMLoad", (data.load.cardSize/1000) + " kb", (data.load.cardSize < 350000 ? true : false)));
+					if ( data.load ) {
+						getTableRow(".loadtests", ++count, "Card Size - Before DOMLoad", (data.load.cardSize/1000) + " kb", (data.load.cardSize < 350000 ? true : false));
 					}
 
-					if ( data.load && data.load.fullSize ) {
-						$(".loadtests").find("tbody").append(getTableRow(++count, "Card Size - All Requests", (data.load.fullSize/1000) + " kb", (data.load.fullSize < 500000 ? true : false)));
+					if ( data.load ) {
+						getTableRow(".loadtests", ++count, "Card Size - All Requests", (data.load.fullSize/1000) + " kb", (data.load.fullSize < 500000 ? true : false));
 					}
 
 					if ( data.screenshot ) {
@@ -293,7 +320,7 @@
 				return false;
 			});
 
-			function getTableRow(id, testname, value, success) {
+			function getTableRow(elemid, id, testname, value, success) {
 
 				var html = [];
 
@@ -328,12 +355,12 @@
 				if ( success === -1 ) {
 					html.push("Warn");
 				} else {
-					html.push(success===true?"Yes":"No");
+					html.push( success===true ? "Yes" : "No" );
 				}
 				html.push("</td>");
 				html.push("</tr>");
 
-				return html.join("");
+				$(elemid).find("tbody").append(html.join(""));
 			}
 
 			function getRequestRow(id, testname, value, success) {

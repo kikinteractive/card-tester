@@ -121,6 +121,8 @@ page.open(url, function (status) {
 			fullLoad: fullLoadTime
 		},
 		link: {
+		},
+		layout: {
 		}
 	};
 	
@@ -184,6 +186,35 @@ page.open(url, function (status) {
 		return document.querySelectorAll('html')[0].getAttribute("manifest");
 	});
 
+	cardReport.layout.topbar_android = page.evaluate(function(){
+		var topBar = document.querySelectorAll('.app-topbar');
+
+		if ( topBar.length ) {
+			return topBar[0].clientHeight;
+		}
+
+		return null;
+	});
+
+	cardReport.layout.topbar_ios = page.evaluate(function(){
+
+		var height = null,
+			topBar = document.querySelectorAll('.app-topbar'),
+			bodyClassList = document.querySelector("body").classList;
+
+		bodyClassList.remove("app-android");
+		bodyClassList.add("app-ios");
+
+		if ( topBar.length ) {
+			height = topBar[0].clientHeight;
+		}
+
+		bodyClassList.add("app-android");
+		bodyClassList.remove("app-ios");
+
+		return height;
+	});
+
 	var resources = [];
 	var size = 0;
 	var fullSize = 0;
@@ -228,7 +259,7 @@ page.open(url, function (status) {
 		
 		cardReport.screenshot2 = generateDataURL(page.renderBase64());
 		
-		worstHackEver(1000);
+		worstHackEver(1200);
 
 		console.log(logFilter + JSON.stringify(cardReport));
 

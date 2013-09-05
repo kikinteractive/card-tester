@@ -3,9 +3,6 @@
 * Copyright Kik Interactive Inc. 2013
 */
 
-.hidden {
-	display: none;
-}
 body {
 	padding-top: 50px;
 	font-family: 'Open Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -14,6 +11,7 @@ body {
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 	font-family: 'Open Sans', "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
 .navbar {}
 .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
 	background-color: #71A406;
@@ -71,6 +69,14 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .btn {
 	border-radius: 0;
 }
+
+.screenshotcontainer {
+	text-align: center;
+}
+.hidden {
+	display: none;
+}
+
 @media (max-width:1199px) {
 	.header-text h1 {
 		padding-top: 120px;
