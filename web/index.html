@@ -198,7 +198,7 @@
 						if ( data.more.tagLocations['kik-icon'] === false ) {
 							getTableRow(".moretests", ++count, "Include In More", data.more.hostname + "<br><br> (Not in document HEAD)", -1);
 						} else {
-							getTableRow(".moretests", ++count, "Include In More", data.more.hostname, true);
+							getTableRow(".moretests", ++count, "Include In More", data.more.hostname, -1);
 						}
 					} else {
 						getTableRow(".moretests", ++count, "Include In More", "No kik-more tag found", false);
