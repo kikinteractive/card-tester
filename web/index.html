@@ -165,11 +165,11 @@
 					var count = 0;
 
 					if ( data.more && data.more.title ) {
-						if ( data.more.tagLocations['kik-more'] === false ) {
-							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title + "<br><br> (Not in document HEAD)", -1);
-						} else {
+						//if ( data.more.tagLocations['kik-more'] === false ) {
+							//getTableRow(".moretests", ++count, "Sidebar Title", data.more.title + "<br><br> (Not in document HEAD)", -1);
+						//} else {
 							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title, true);
-						}
+						//}
 					} else {
 						getTableRow(".moretests", ++count, "Sidebar Title", "", false);
 					}
@@ -195,17 +195,17 @@
 					}
 
 					if ( data.more && data.more.hostname ) {
-						if ( data.more.tagLocations['kik-icon'] === false ) {
+						if ( data.more.tagLocations['kik-more'] === false ) {
 							getTableRow(".moretests", ++count, "Include In More", data.more.hostname + "<br><br> (Not in document HEAD)", -1);
 						} else {
-							getTableRow(".moretests", ++count, "Include In More", data.more.hostname, -1);
+							getTableRow(".moretests", ++count, "Include In More", data.more.hostname, true);
 						}
 					} else {
 						getTableRow(".moretests", ++count, "Include In More", "No kik-more tag found", false);
 					}
 
 					if ( data.unsupported ) {
-						if ( data.more.tagLocations['kik-icon'] === false ) {
+						if ( data.more.tagLocations['kik-unsupported'] === false ) {
 							getTableRow(".moretests", ++count, "Unsupported OS", data.unsupported + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "Unsupported OS", data.unsupported, true);
@@ -215,7 +215,7 @@
 					}
 
 					if ( data.link && data.link.terms ) {
-						if ( data.more.tagLocations['kik-icon'] === false ) {
+						if ( data.more.tagLocations['terms'] === false ) {
 							getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>" + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true);
@@ -225,7 +225,7 @@
 					}
 
 					if ( data.link && data.link.privacy ) {
-						if ( data.more.tagLocations['kik-icon'] === false ) {
+						if ( data.more.tagLocations['privacy'] === false ) {
 							getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>" + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true);
@@ -267,7 +267,7 @@
 							}
 						});
 
-						var blocksLoad = (requestCount > 1 ? false : true);
+						var blocksLoad = (requestCount > 0 ? false : true);
 
 						getTableRow(".loadtests", ++count, "Blocks DOM Load", requestCount > 0 ? requestCount + " extra requests" : "", blocksLoad);
 					}
