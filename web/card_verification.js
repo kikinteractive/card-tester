@@ -1,11 +1,7 @@
 var fs     = require('fs'),
-	page   = require('webpage').create(),
-	system = require('system');
+	page   = require('webpage').create();
 
-var beginTime = Date.now(),
-	logFilter = "#######CARDTESTER#######",
-	domLoaded = false,
-	url, domLoadTime, fullLoadTime;
+var	system = require('system');
 
 if (system.args.length === 1) {
     console.log('Usage: card_verification.js <some URL>');
@@ -13,6 +9,11 @@ if (system.args.length === 1) {
 } else {
 	url = system.args[1];
 }
+
+var beginTime = Date.now(),
+	logFilter = "#######CARDTESTER#######",
+	domLoaded = false,
+	url, domLoadTime, fullLoadTime;
 
 page.settings.localToRemoteUrlAccessEnabled = true;
 page.settings.webSecurityEnabled = false;
@@ -37,8 +38,6 @@ page.onError = function(msg) {
 };
 
 page.onInitialized = function() {
-    //console.log("page.onInitialized");
-    printArgs.apply(this, arguments);
 
 	page.evaluate(function(domContentLoadedMsg) {
 		document.addEventListener('DOMContentLoaded', function() {
@@ -68,14 +67,12 @@ page.onCallback = function(data) {
 };
 
 page.onLoadStarted = function() {
-    //console.log("page.onLoadStarted");
-    printArgs.apply(this, arguments);
     page.startTime = new Date();
+    //console.log(logFilter + "page.onLoadStarted");
 };
 
-page.onLoadFinished = function() {
-    //console.log("page.onLoadFinished");
-    printArgs.apply(this, arguments);
+page.onLoadFinished = function (page, config, status) {
+	//console.log(logFilter + "page.onLoadFinished");
 };
 
 page.onResourceRequested = function (req) {
@@ -95,10 +92,6 @@ page.onResourceReceived = function (res) {
 	if (res.stage === 'end') {
 		page.resources[res.id].endReply = res;
 	}
-};
-
-page.onLoadFinished = function (page, config, status) {
-	//console.log(logFilter + "page.onLoadFinished");
 };
 
 page.open(url, function (status) {
@@ -296,10 +289,3 @@ page.open(url, function (status) {
 		return "data:image/png;base64," + data;
 	}
 });
-
-function printArgs() {
-    var i, ilen;
-    for (i = 0, ilen = arguments.length; i < ilen; ++i) {
-        //console.log("    arguments[" + i + "] = " + JSON.stringify(arguments[i]));
-    }
-}
