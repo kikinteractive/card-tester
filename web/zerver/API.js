@@ -7,7 +7,7 @@ function testCard(url, callback) {
 	
 	var childProcess = require('child_process'),
 		output       = '',
-		phantomjs    = childProcess.spawn('phantomjs', ['--web-security=false', '--disk-cache=false', 'card_verification.js', url]);
+		phantomjs    = childProcess.spawn('phantomjs', ['--web-security=false', '--disk-cache=false', 'card_tests.js', url]);
 
 	phantomjs.stdout.on('data', function(data) {
 		output += data;
@@ -19,51 +19,54 @@ function testCard(url, callback) {
 
 			var cleaned = output.replace("#######CARDTESTER#######", "");
 			
-			try {
+			if ( cleaned.length ) {
+				try {
 				
-				var parsedData = JSON.parse(cleaned),
-					fetchingTerms = false,
-					fetchingPrivacy = false;			
+					var parsedData = JSON.parse(cleaned),
+						fetchingTerms = false,
+						fetchingPrivacy = false;			
 
-				if ( parsedData.link.terms ) {
+					if ( parsedData.link.terms ) {
 
-					fetchingTerms = true;
+						fetchingTerms = true;
 
-					fetchLink(parsedData.link.terms, function(status){
+						fetchLink(parsedData.link.terms, function(status){
 
-						parsedData.link.termsStatus = status;
-						fetchingTerms = false;
+							parsedData.link.termsStatus = status;
+							fetchingTerms = false;
 
-						if ( !fetchingTerms && !fetchingPrivacy ) {
-							callback(parsedData);
-						}
-					});
+							if ( !fetchingTerms && !fetchingPrivacy ) {
+								callback(parsedData);
+							}
+						});
+					}
+
+					if ( parsedData.link.privacy ) {
+
+						fetchingPrivacy = true;
+
+						fetchLink(parsedData.link.privacy, function(status){
+
+							parsedData.link.privacyStatus = status;
+							fetchingPrivacy = false;
+
+							if ( !fetchingTerms && !fetchingPrivacy ) {
+								callback(parsedData);
+							}
+						});
+					}
+
+					if ( !parsedData.link.terms && !parsedData.link.privacy ) {
+						callback(parsedData);
+					}
+
+				} catch(err) {
+					console.log("Error parsing json: " + err);
+					callback();
 				}
-
-				if ( parsedData.link.privacy ) {
-
-					fetchingPrivacy = true;
-
-					fetchLink(parsedData.link.privacy, function(status){
-
-						parsedData.link.privacyStatus = status;
-						fetchingPrivacy = false;
-
-						if ( !fetchingTerms && !fetchingPrivacy ) {
-							callback(parsedData);
-						}
-					});
-				}
-
-				if ( !parsedData.link.terms && !parsedData.link.privacy ) {
-					callback(parsedData);
-				}
-
-			} catch(err) {
-				console.log("Error parsing json: " + err);
+			} else {
 				callback();
 			}
-
 		} else {
 			callback();
 		}

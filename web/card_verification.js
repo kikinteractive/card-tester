@@ -1,291 +1,296 @@
-var fs     = require('fs'),
-	page   = require('webpage').create();
+exports.runTests = function(url, callback) {
+	var fs     = require('fs'),
+		page   = require('webpage').create();
 
-var	system = require('system');
+	//var	system = require('system');
+	// if (system.args.length === 1) {
+	//     console.log('Usage: card_verification.js <some URL>');
+	//     phantom.exit(1);
+	// } else {
+	// 	url = system.args[1];
+	// }
 
-if (system.args.length === 1) {
-    console.log('Usage: card_verification.js <some URL>');
-    phantom.exit(1);
-} else {
-	url = system.args[1];
-}
+	var beginTime = Date.now(),
+		logFilter = "#######CARDTESTER#######",
+		domLoaded = false,
+		domLoadTime, fullLoadTime;
 
-var beginTime = Date.now(),
-	logFilter = "#######CARDTESTER#######",
-	domLoaded = false,
-	url, domLoadTime, fullLoadTime;
+	page.settings.localToRemoteUrlAccessEnabled = true;
+	page.settings.webSecurityEnabled = false;
+	page.settings.clearMemoryCaches = true;
+	page.settings.appCache = false;
+	page.settings.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3";
+	page.settings.userAgent = "Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30";
 
-page.settings.localToRemoteUrlAccessEnabled = true;
-page.settings.webSecurityEnabled = false;
-page.settings.clearMemoryCaches = true;
-page.settings.appCache = false;
-page.settings.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3";
-page.settings.userAgent = "Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30";
+	page.resources = [];
+	page.appCache = false;
+	page.webSecurityEnabled = false;
+	page.viewportSize = { width: 320, height : 548 };
 
-page.resources = [];
-page.appCache = false;
-page.webSecurityEnabled = false;
-page.viewportSize = { width: 320, height : 548 };
-
-page.onConsoleMessage = function (msg) {
-	if ( msg.indexOf(logFilter) === 0 ) {
-    	console.log(msg.replace(logFilter, ""));
-	}
-};
-
-page.onError = function(msg) {
-	return false;
-};
-
-page.onInitialized = function() {
-
-	page.evaluate(function(domContentLoadedMsg) {
-		document.addEventListener('DOMContentLoaded', function() {
-			window.callPhantom('DOMContentLoaded');
-		}, false);
-	});
-
-	page.evaluate(function(domContentLoadedMsg) {
-		window.addEventListener('load', function() {
-			window.callPhantom('load');
-		}, false);
-	});
-};
-
-page.onCallback = function(data) {
-
-	var newDiff = Date.now() - beginTime;
-
-	if ( data === "DOMContentLoaded" ) {
-		domLoadTime = newDiff;
-		domLoaded = true;
-	} else if ( data === "load" ) {
-		fullLoadTime = newDiff;
-	}
-
-	//console.log(data + ' time ' + newDiff + ' msec');
-};
-
-page.onLoadStarted = function() {
-    page.startTime = new Date();
-    //console.log(logFilter + "page.onLoadStarted");
-};
-
-page.onLoadFinished = function (page, config, status) {
-	//console.log(logFilter + "page.onLoadFinished");
-};
-
-page.onResourceRequested = function (req) {
-	page.resources[req.id] = {
-		request: req,
-		startReply: null,
-		endReply: null
-	};
-
-	page.resources[req.id].domLoaded = domLoaded;
-};
-
-page.onResourceReceived = function (res) {
-	if (res.stage === 'start') {
-		page.resources[res.id].startReply = res;
-	}
-	if (res.stage === 'end') {
-		page.resources[res.id].endReply = res;
-	}
-};
-
-page.open(url, function (status) {
-
-	var loadTime;
-
-	if (status !== 'success') {
-        //console.log('FAIL to load the address');
-		// page.injectJs("inject1.js");
-		// page.injectJs("inject2.js");
-    } else {
-        //console.log('Page.open Loading time ' + loadTime + ' msec');
-        loadTime = Date.now() - beginTime;
-    }
-
-	var cardReport = {
-		more: {
-			includeInMore: false,
-			tagLocations: {}
-		},
-		load: {
-			time: loadTime,
-			domLoad: domLoadTime,
-			fullLoad: fullLoadTime
-		},
-		link: {
-		},
-		layout: {
+	page.onConsoleMessage = function (msg) {
+		if ( msg.indexOf(logFilter) === 0 ) {
+	    	console.log(msg.replace(logFilter, ""));
 		}
 	};
-	
-    cardReport.screenshot = generateDataURL(page.renderBase64());
 
-	cardReport.more.title = page.evaluate(function() {
-		return document.title;
-	});
+	page.onError = function(msg) {
+		return false;
+	};
 
-	cardReport.more.canon = page.evaluate(function() {
-		var canon = location.href.replace("http://", "").replace(location.search, "");
+	page.onInitialized = function() {
 
-		if ( location.pathname != "/" ) {
-			canon = canon.replace(location.pathname, "");
+		page.evaluate(function(domContentLoadedMsg) {
+			document.addEventListener('DOMContentLoaded', function() {
+				window.callPhantom('DOMContentLoaded');
+			}, false);
+		});
+
+		page.evaluate(function(domContentLoadedMsg) {
+			window.addEventListener('load', function() {
+				window.callPhantom('load');
+			}, false);
+		});
+	};
+
+	page.onCallback = function(data) {
+
+		var newDiff = Date.now() - beginTime;
+
+		if ( data === "DOMContentLoaded" ) {
+			domLoadTime = newDiff;
+			domLoaded = true;
+		} else if ( data === "load" ) {
+			fullLoadTime = newDiff;
 		}
 
-		return {
-			pathname: location.pathname,
-			url: location.href,
-			search: location.search,
-			canon: canon
+		//console.log(data + ' time ' + newDiff + ' msec');
+	};
+
+	page.onLoadStarted = function() {
+	    page.startTime = new Date();
+	    //console.log(logFilter + "page.onLoadStarted");
+	};
+
+	page.onLoadFinished = function (page, config, status) {
+		//console.log(logFilter + "page.onLoadFinished");
+	};
+
+	page.onResourceRequested = function (req) {
+		page.resources[req.id] = {
+			request: req,
+			startReply: null,
+			endReply: null
 		};
-	});
 
-	cardReport = page.evaluate(function (cardReport, logFilter) {
+		page.resources[req.id].domLoaded = domLoaded;
+	};
 
-		var metaTags = document.querySelectorAll("meta");
+	page.onResourceReceived = function (res) {
+		if (res.stage === 'start') {
+			page.resources[res.id].startReply = res;
+		}
+		if (res.stage === 'end') {
+			page.resources[res.id].endReply = res;
+		}
+	};
 
-		for (var i = 0; i < metaTags.length; i++) {
+	page.open(url, function (status) {
+
+		var loadTime;
+
+		if (status !== 'success') {
+	        //console.log('FAIL to load the address');
+			// page.injectJs("inject1.js");
+			// page.injectJs("inject2.js");
+	    } else {
+	        //console.log('Page.open Loading time ' + loadTime + ' msec');
+	        loadTime = Date.now() - beginTime;
+	    }
+
+		var cardReport = {
+			more: {
+				includeInMore: false,
+				tagLocations: {}
+			},
+			load: {
+				time: loadTime,
+				domLoad: domLoadTime,
+				fullLoad: fullLoadTime
+			},
+			link: {
+			},
+			layout: {
+			}
+		};
+		
+	    cardReport.screenshot = generateDataURL(page.renderBase64());
+
+		cardReport.more.title = page.evaluate(function() {
+			return document.title;
+		});
+
+		cardReport.more.canon = page.evaluate(function() {
+			var canon = location.href.replace("http://", "").replace(location.search, "");
+
+			if ( location.pathname != "/" ) {
+				canon = canon.replace(location.pathname, "");
+			} else if ( location.pathname === "/" ) {
+				canon = canon.substr(0, canon.length-1);
+			}
+
+			return {
+				pathname: location.pathname,
+				url: location.href,
+				search: location.search,
+				canon: canon
+			};
+		});
+
+		cardReport = page.evaluate(function (cardReport, logFilter) {
+
+			var metaTags = document.querySelectorAll("meta");
+
+			for (var i = 0; i < metaTags.length; i++) {
+				
+				var tag = metaTags[i];
+
+				if ((tag.name === "description") && (tag.content || '').trim()) {
+					cardReport.more.description = tag.content;
+					cardReport.more.tagLocations["description"] = (tag.parentNode === document.head);
+				}
+
+				if ((tag.name === "kik-more") && (tag.content || '').trim()) {
+					cardReport.more.includeInMore = true;
+					cardReport.more.hostname = tag.content;
+					cardReport.more.tagLocations["kik-more"] = (tag.parentNode === document.head);
+				}
+
+				if ((tag.name === "kik-unsupported") && (tag.content || '').trim()) {
+					cardReport.unsupported = tag.content;
+					cardReport.more.tagLocations["kik-unsupported"] = (tag.parentNode === document.head);
+				}
+			}
+
+			var linkTags = document.querySelectorAll("link");
+
+			for (var j = 0; j < linkTags.length; j++) {
+				var tag = linkTags[j];
+
+				if ((tag.rel === "kik-icon") && (tag.href || '').trim()) {
+					cardReport.more.icon = tag.href;
+					cardReport.more.tagLocations["kik-icon"] = (tag.parentNode === document.head);
+				}
+
+				if ((tag.rel === "privacy") && (tag.href || '').trim()) {
+					cardReport.link.privacy = tag.href;
+					cardReport.more.tagLocations["privacy"] = (tag.parentNode === document.head);
+				}
+
+				if ((tag.rel === "terms") && (tag.href || '').trim()) {
+					cardReport.link.terms = tag.href;
+					cardReport.more.tagLocations["terms"] = (tag.parentNode === document.head);
+				}
+			}
+
+			return cardReport;
+
+		}, cardReport, logFilter);
+
+		cardReport.load.manifest = page.evaluate(function(){
+			return document.querySelectorAll('html')[0].getAttribute("manifest");
+		});
+
+		cardReport.layout.topbar_android = page.evaluate(function(){
+			var topBar = document.querySelectorAll('.app-topbar');
+
+			if ( topBar.length ) {
+				return topBar[0].clientHeight;
+			}
+
+			return null;
+		});
+
+		cardReport.layout.topbar_ios = page.evaluate(function(){
+
+			var height = null,
+				topBar = document.querySelectorAll('.app-topbar'),
+				bodyClassList = document.querySelector("body").classList;
+
+			bodyClassList.remove("app-android");
+			bodyClassList.add("app-ios");
+
+			if ( topBar.length ) {
+				height = topBar[0].clientHeight;
+			}
+
+			bodyClassList.add("app-android");
+			bodyClassList.remove("app-ios");
+
+			return height;
+		});
+
+		var resources = [];
+		var size = 0;
+		var fullSize = 0;
+
+		page.resources.forEach(function (resource) {
+
+			if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^http:\/\/cardsbridge.kik.com\/.*)/i) && isFirstFetch(resource.request.url) ) {
+
+				resources.push(resource);
+
+				if ( resource.startReply ) {
+					if ( !resource.domLoaded ) {
+						size += resource.startReply.bodySize;
+						fullSize += resource.startReply.bodySize;
+					} else {
+						fullSize += resource.startReply.bodySize;
+					}
+				}
+			}
+
+			function isFirstFetch(url) {
+				resources.forEach(function(r){
+					if( r.request.url == url ) {
+						return false;
+					}
+				});
+
+				return true;
+			}
+		});
+
+		cardReport.load.resources = resources;
+		cardReport.load.requestCount = resources.length;
+		cardReport.load.cardSize = size;
+		cardReport.load.fullSize = fullSize;
+
+		var start = new Date().getTime();
+
+		worstHackEver(2000);
+
+		//setTimeout(function(){
 			
-			var tag = metaTags[i];
+			cardReport.screenshot2 = generateDataURL(page.renderBase64());
+			
+			worstHackEver(1200);
 
-			if ((tag.name === "description") && (tag.content || '').trim()) {
-				cardReport.more.description = tag.content;
-				cardReport.more.tagLocations["description"] = (tag.parentNode === document.head);
-			}
+			//console.log(logFilter + JSON.stringify(cardReport));
 
-			if ((tag.name === "kik-more") && (tag.content || '').trim()) {
-				cardReport.more.includeInMore = true;
-				cardReport.more.hostname = tag.content;
-				cardReport.more.tagLocations["kik-more"] = (tag.parentNode === document.head);
-			}
+			callback(JSON.stringify(cardReport));
 
-			if ((tag.name === "kik-unsupported") && (tag.content || '').trim()) {
-				cardReport.unsupported = tag.content;
-				cardReport.more.tagLocations["kik-unsupported"] = (tag.parentNode === document.head);
-			}
-		}
+			//phantom.exit();
 
-		var linkTags = document.querySelectorAll("link");
+		//}, 4250);
 
-		for (var j = 0; j < linkTags.length; j++) {
-			var tag = linkTags[j];
-
-			if ((tag.rel === "kik-icon") && (tag.href || '').trim()) {
-				cardReport.more.icon = tag.href;
-				cardReport.more.tagLocations["kik-icon"] = (tag.parentNode === document.head);
-			}
-
-			if ((tag.rel === "privacy") && (tag.href || '').trim()) {
-				cardReport.link.privacy = tag.href;
-				cardReport.more.tagLocations["privacy"] = (tag.parentNode === document.head);
-			}
-
-			if ((tag.rel === "terms") && (tag.href || '').trim()) {
-				cardReport.link.terms = tag.href;
-				cardReport.more.tagLocations["terms"] = (tag.parentNode === document.head);
+		function worstHackEver(time) {
+			while ( (new Date().getTime()) - start < time ) {
+				start = start;
 			}
 		}
 
-		return cardReport;
-
-	}, cardReport, logFilter);
-
-	cardReport.load.manifest = page.evaluate(function(){
-		return document.querySelectorAll('html')[0].getAttribute("manifest");
-	});
-
-	cardReport.layout.topbar_android = page.evaluate(function(){
-		var topBar = document.querySelectorAll('.app-topbar');
-
-		if ( topBar.length ) {
-			return topBar[0].clientHeight;
-		}
-
-		return null;
-	});
-
-	cardReport.layout.topbar_ios = page.evaluate(function(){
-
-		var height = null,
-			topBar = document.querySelectorAll('.app-topbar'),
-			bodyClassList = document.querySelector("body").classList;
-
-		bodyClassList.remove("app-android");
-		bodyClassList.add("app-ios");
-
-		if ( topBar.length ) {
-			height = topBar[0].clientHeight;
-		}
-
-		bodyClassList.add("app-android");
-		bodyClassList.remove("app-ios");
-
-		return height;
-	});
-
-	var resources = [];
-	var size = 0;
-	var fullSize = 0;
-
-	page.resources.forEach(function (resource) {
-
-		if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^http:\/\/cardsbridge.kik.com\/.*)/i) && isFirstFetch(resource.request.url) ) {
-
-			resources.push(resource);
-
-			if ( resource.startReply ) {
-				if ( !resource.domLoaded ) {
-					size += resource.startReply.bodySize;
-					fullSize += resource.startReply.bodySize;
-				} else {
-					fullSize += resource.startReply.bodySize;
-				}
-			}
-		}
-
-		function isFirstFetch(url) {
-			resources.forEach(function(r){
-				if( r.request.url == url ) {
-					return false;
-				}
-			});
-
-			return true;
+		function generateDataURL(data) {
+			return "data:image/png;base64," + data;
 		}
 	});
-
-	cardReport.load.resources = resources;
-	cardReport.load.requestCount = resources.length;
-	cardReport.load.cardSize = size;
-	cardReport.load.fullSize = fullSize;
-
-	var start = new Date().getTime();
-
-	worstHackEver(2000);
-
-	setTimeout(function(){
-		
-		cardReport.screenshot2 = generateDataURL(page.renderBase64());
-		
-		worstHackEver(1200);
-
-		console.log(logFilter + JSON.stringify(cardReport));
-
-		phantom.exit();
-
-	}, 4250);
-
-	function worstHackEver(time) {
-		while ( (new Date().getTime()) - start < time ) {
-			start = start;
-		}
-	}
-
-	function generateDataURL(data) {
-		return "data:image/png;base64," + data;
-	}
-});
+};

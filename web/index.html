@@ -206,12 +206,16 @@
 							}
 						} else {
 
-							canonMatchesKikMore = (data.more.hostname === "https://" + data.more.canon.canon);
-							
-							if ( canonMatchesKikMore ) {
-								getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>", canonMatchesKikMore);
+							if ( data.more.hostname.indexOf("http://") === 0 ) {
+								getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>Should not include http:// in the kik-more meta tag</b>", canonMatchesKikMore);
 							} else {
-								getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>Should include https:// to ensure https url gets used</b>", canonMatchesKikMore);
+								canonMatchesKikMore = (data.more.hostname === "https://" + data.more.canon.canon);
+								
+								if ( canonMatchesKikMore ) {
+									getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>", canonMatchesKikMore);
+								} else {
+									getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>Should include https:// to ensure https url gets used</b>", canonMatchesKikMore);
+								}	
 							}
 						}
 					} else {
