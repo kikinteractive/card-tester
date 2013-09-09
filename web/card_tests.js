@@ -7,7 +7,7 @@ if (system.args.length === 1) {
 } else {
 	url = system.args[1];
 
-	cardTester.runTests(url, function(){
+	cardTester.runTests(url, function(data){
 		cardTester.runTests(url, function(data){
 			console.log(data);
 			phantom.exit(0);

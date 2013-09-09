@@ -394,7 +394,7 @@
 
 				var html = [];
 
-				if ( manifest.length > 0 && testname.indexOf(manifest) > -1 ) {
+				if ( manifest.length && testname.indexOf(manifest) > -1 ) {
 					html.push("<tr class='active'>");
 				} else {
 					if ( success ) {

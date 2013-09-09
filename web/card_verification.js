@@ -269,7 +269,7 @@ exports.runTests = function(url, callback) {
 
 		worstHackEver(2000);
 
-		//setTimeout(function(){
+		setTimeout(function(){
 			
 			cardReport.screenshot2 = generateDataURL(page.renderBase64());
 			
@@ -281,7 +281,7 @@ exports.runTests = function(url, callback) {
 
 			//phantom.exit();
 
-		//}, 4250);
+		}, 4250);
 
 		function worstHackEver(time) {
 			while ( (new Date().getTime()) - start < time ) {
