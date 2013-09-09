@@ -336,9 +336,9 @@
 							}
 
 							if ( resource.startReply && resource.startReply.bodySize ) {
-								$(".requests").find("tbody").append(getRequestRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", resource.domLoaded));
+								$(".requests").find("tbody").append(getRequestRow(++count, resource.request.url, ((resource.startReply.bodySize)/1000) + "kb", resource.domLoaded, data.load.manifest));
 							} else {
-								$(".requests").find("tbody").append(getRequestRow(++count, resource.request.url, "", resource.domLoaded));
+								$(".requests").find("tbody").append(getRequestRow(++count, resource.request.url, "", resource.domLoaded, data.load.manifest));
 							}
 						});
 					}
@@ -390,11 +390,11 @@
 				$(elemid).find("tbody").append(html.join(""));
 			}
 
-			function getRequestRow(id, testname, value, success) {
+			function getRequestRow(id, testname, value, success, manifest) {
 
 				var html = [];
 
-				if ( testname.indexOf(".manifest") >= 0 ) {
+				if ( manifest.length > 0 && testname.indexOf(manifest) > -1 ) {
 					html.push("<tr class='active'>");
 				} else {
 					if ( success ) {
