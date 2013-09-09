@@ -165,11 +165,11 @@
 					var count = 0;
 
 					if ( data.more && data.more.title ) {
-						//if ( data.more.tagLocations['kik-more'] === false ) {
-							//getTableRow(".moretests", ++count, "Sidebar Title", data.more.title + "<br><br> (Not in document HEAD)", -1);
-						//} else {
+						if ( data.more.tagLocations['kik-more'] === false ) {
+							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title + "<br><br> (Not in document HEAD)", -1);
+						} else {
 							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title, true);
-						//}
+						}
 					} else {
 						getTableRow(".moretests", ++count, "Sidebar Title", "", false);
 					}
@@ -195,10 +195,24 @@
 					}
 
 					if ( data.more && data.more.hostname ) {
-						if ( data.more.tagLocations['kik-more'] === false ) {
-							getTableRow(".moretests", ++count, "Include In More", data.more.hostname + "<br><br> (Not in document HEAD)", -1);
+
+						var canonMatchesKikMore = (data.more.hostname === data.more.canon.canon);
+
+						if ( canonMatchesKikMore ) {
+							if ( data.more.tagLocations['kik-more'] === false ) {
+								getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>" + "<br><br> (Not in document HEAD)", -1);
+							} else {
+								getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>", canonMatchesKikMore);
+							}
 						} else {
-							getTableRow(".moretests", ++count, "Include In More", data.more.hostname, true);
+
+							canonMatchesKikMore = (data.more.hostname === "https://" + data.more.canon.canon);
+							
+							if ( canonMatchesKikMore ) {
+								getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>", canonMatchesKikMore);
+							} else {
+								getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>Should include https:// to ensure https url gets used</b>", canonMatchesKikMore);
+							}
 						}
 					} else {
 						getTableRow(".moretests", ++count, "Include In More", "No kik-more tag found", false);
@@ -215,20 +229,30 @@
 					}
 
 					if ( data.link && data.link.terms ) {
-						if ( data.more.tagLocations['terms'] === false ) {
-							getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>" + "<br><br> (Not in document HEAD)", -1);
+
+						if ( data.link.termsStatus !== 200 ) {
+							getTableRow(".moretests", ++count, "T&C provided but couldn't be loaded.", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", false);
 						} else {
-							getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true);
+							if ( data.more.tagLocations['terms'] === false ) {
+								getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>" + "<br><br> (Not in document HEAD)", -1);
+							} else {
+								getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true);
+							}
 						}
 					} else {
 						getTableRow(".moretests", ++count, "T&C Provided", "Not Provided", true);
 					}
 
 					if ( data.link && data.link.privacy ) {
-						if ( data.more.tagLocations['privacy'] === false ) {
-							getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>" + "<br><br> (Not in document HEAD)", -1);
+
+						if ( data.link.privacyStatus !== 200 ) {
+							getTableRow(".moretests", ++count, "Privacy Policy provided but couldn't be loaded.", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", false);
 						} else {
-							getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true);
+							if ( data.more.tagLocations['privacy'] === false ) {
+								getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>" + "<br><br> (Not in document HEAD)", -1);
+							} else {
+								getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true);
+							}
 						}
 					} else {
 						getTableRow(".moretests", ++count, "Privacy Policy Provided", "Not Provided", true);
@@ -258,7 +282,7 @@
 
 						data.load.resources.forEach(function(resource){
 
-							if ( resource.request.url.indexOf("card://") >= 0 || resource.request.url.indexOf("cards://") >= 0 || resource.request.url.indexOf(".manifest") >= 0 ) {
+							if ( resource.request.url.indexOf("card://") >= 0 || resource.request.url.indexOf("cards://") >= 0 || resource.request.url.indexOf(data.load.manifest) >= 0 ) {
 								return;
 							}
 
@@ -269,7 +293,7 @@
 
 						var blocksLoad = (requestCount > 0 ? false : true);
 
-						getTableRow(".loadtests", ++count, "Blocks DOM Load", requestCount > 0 ? requestCount + " extra requests" : "", blocksLoad);
+						getTableRow(".loadtests", ++count, "Blocks DOM Load", requestCount > 0 ? requestCount + " extra requests" : "Not blocking DOM Load", blocksLoad);
 					}
 
 					if ( data.load && data.load.domLoad ) {

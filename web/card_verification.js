@@ -32,6 +32,10 @@ page.onConsoleMessage = function (msg) {
 	}
 };
 
+page.onError = function(msg) {
+	return false;
+};
+
 page.onInitialized = function() {
     //console.log("page.onInitialized");
     printArgs.apply(this, arguments);
@@ -130,6 +134,21 @@ page.open(url, function (status) {
 
 	cardReport.more.title = page.evaluate(function() {
 		return document.title;
+	});
+
+	cardReport.more.canon = page.evaluate(function() {
+		var canon = location.href.replace("http://", "").replace(location.search, "");
+
+		if ( location.pathname != "/" ) {
+			canon = canon.replace(location.pathname, "");
+		}
+
+		return {
+			pathname: location.pathname,
+			url: location.href,
+			search: location.search,
+			canon: canon
+		};
 	});
 
 	cardReport = page.evaluate(function (cardReport, logFilter) {
