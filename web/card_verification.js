@@ -105,7 +105,6 @@ exports.runTests = function(url, callback) {
 				tagLocations: {}
 			},
 			load: {
-				time: loadTime,
 				domLoad: domLoadTime,
 				fullLoad: fullLoadTime
 			},
