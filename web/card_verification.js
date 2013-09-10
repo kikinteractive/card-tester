@@ -8,7 +8,7 @@ exports.runTests = function(url, callback) {
 		domLoaded   = false,
 		domLoadTime, fullLoadTime;
 
-	var SWEAR_WORDS = /ass|asshole|bitch|cunt|damn|dick|dyke|faggot|fuck|nigger|penis|pussy|shit|sex|spic|shit|vagina|whore/gi;
+	var SWEAR_WORDS = /\sasshole\s|\sbitch\s|\scunt\s|\sdamn\s|\sdick\s|\sdyke\s|\sfaggot\s|\sfuck\s|\sfuckass\s|\snigger\s|\spenis\s|\spussy\s|\sshit\s|\ssex\s|\sspic\s|\sshit\s|\svagina\s|\swhore\s/gi;
 
 	page.settings.localToRemoteUrlAccessEnabled = true;
 	page.settings.webSecurityEnabled = false;
