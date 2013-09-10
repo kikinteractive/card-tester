@@ -3,7 +3,15 @@ The Card Tester
 
 An online service that runs many of our QA checklist tests. It cab be used for cards that would like to be included in the more card.
 
+
+###Heroku Setup
+
 The service is avilible at [cards-tester.herokuapp.com](http://cards-tester.herokuapp.com).
+
+The tester uses phantomjs running on heroku. It requires the builtpack-multi buildback to be configured on the heroku application. Details can be found here (heroku-buildpack-multi)[https://github.com/ddollar/heroku-buildpack-multi]
+
+
+###Results
 
 The results are servered as a JSON object. An example of the Youtube Card output is below:
 
