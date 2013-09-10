@@ -1,11 +1,11 @@
-card-tester
+The Card Tester
 ===========
 
-An online service that runs many of our QA tests for cards that would like to be included in the more card.
+An online service that runs many of our QA checklist tests. It cab be used for cards that would like to be included in the more card.
 
 The service is avilible at [cards-tester.herokuapp.com](http://cards-tester.herokuapp.com).
 
-The restuls are servered as a JSON object. An example of the Youtube Card output is below:
+The results are servered as a JSON object. An example of the Youtube Card output is below:
 
 ```js
 {
@@ -107,7 +107,7 @@ The restuls are servered as a JSON object. An example of the Youtube Card output
                 "hostname": "youtube.kik.com",
                 "icon": "http://youtube.kik.com/img/icon.png?v=3",
                 "includeInMore": true,
-                "tagLocations": {
+                "tagInHead": {
                     "description": true,
                     "kik-icon": true,
                     "kik-more": true

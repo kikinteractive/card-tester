@@ -165,7 +165,7 @@
 					var count = 0;
 
 					if ( data.more && data.more.title ) {
-						if ( data.more.tagLocations['kik-more'] === false ) {
+						if ( data.more.tagInHead['kik-more'] === false ) {
 							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title, true);
@@ -181,7 +181,7 @@
 					}
 
 					if ( data.more && data.more.icon ) {
-						if ( data.more.tagLocations['kik-icon'] === false ) {
+						if ( data.more.tagInHead['kik-icon'] === false ) {
 							getTableRow(".moretests", ++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />" + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "Sidebar Icon", "<img style='width: 80px; height: 50px' src='" + data.more.icon + "' />", true);
@@ -191,7 +191,7 @@
 					}
 
 					if ( data.more && data.more.description ) {
-						if ( data.more.tagLocations['description'] === false ) {
+						if ( data.more.tagInHead['description'] === false ) {
 							getTableRow(".moretests", ++count, "More Description", data.more.description + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "More Description", data.more.description, true);
@@ -217,7 +217,7 @@
 						var canonMatchesKikMore = (data.more.hostname === data.more.canon.canon);
 
 						if ( canonMatchesKikMore ) {
-							if ( data.more.tagLocations['kik-more'] === false ) {
+							if ( data.more.tagInHead['kik-more'] === false ) {
 								getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>" + "<br><br> (Not in document HEAD)", -1);
 							} else {
 								getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>", canonMatchesKikMore);
@@ -241,7 +241,7 @@
 					}
 
 					if ( data.unsupported ) {
-						if ( data.more.tagLocations['kik-unsupported'] === false ) {
+						if ( data.more.tagInHead['kik-unsupported'] === false ) {
 							getTableRow(".moretests", ++count, "Unsupported OS", data.unsupported + "<br><br> (Not in document HEAD)", -1);
 						} else {
 							getTableRow(".moretests", ++count, "Unsupported OS", data.unsupported, true);
@@ -255,7 +255,7 @@
 						if ( data.link.termsStatus !== 200 ) {
 							getTableRow(".moretests", ++count, "T&C provided but couldn't be loaded.", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", false);
 						} else {
-							if ( data.more.tagLocations['terms'] === false ) {
+							if ( data.more.tagInHead['terms'] === false ) {
 								getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>" + "<br><br> (Not in document HEAD)", -1);
 							} else {
 								getTableRow(".moretests", ++count, "T&C Provided", "<a href='" + data.link.terms + "'>" + data.link.terms + "</a>", true);
@@ -270,7 +270,7 @@
 						if ( data.link.privacyStatus !== 200 ) {
 							getTableRow(".moretests", ++count, "Privacy Policy provided but couldn't be loaded.", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", false);
 						} else {
-							if ( data.more.tagLocations['privacy'] === false ) {
+							if ( data.more.tagInHead['privacy'] === false ) {
 								getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>" + "<br><br> (Not in document HEAD)", -1);
 							} else {
 								getTableRow(".moretests", ++count, "Privacy Policy Provided", "<a href='" + data.link.privacy + "'>" + data.link.privacy + "</a>", true);

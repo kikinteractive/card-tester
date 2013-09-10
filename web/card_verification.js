@@ -102,7 +102,7 @@ exports.runTests = function(url, callback) {
 		var cardReport = {
 			more: {
 				includeInMore: false,
-				tagLocations: {}
+				tagInHead: {}
 			},
 			load: {
 				domLoad: domLoadTime,
@@ -150,18 +150,18 @@ exports.runTests = function(url, callback) {
 				if ((tag.name === "description") && (tag.content || '').trim()) {
 					cardReport.more.description = tag.content;
 					cardReport.more.description_clean = !SWEAR_WORDS.test(cardReport.more.description);
-					cardReport.more.tagLocations["description"] = (tag.parentNode === document.head);
+					cardReport.more.tagInHead["description"] = (tag.parentNode === document.head);
 				}
 
 				if ((tag.name === "kik-more") && (tag.content || '').trim()) {
 					cardReport.more.includeInMore = true;
 					cardReport.more.hostname = tag.content;
-					cardReport.more.tagLocations["kik-more"] = (tag.parentNode === document.head);
+					cardReport.more.tagInHead["kik-more"] = (tag.parentNode === document.head);
 				}
 
 				if ((tag.name === "kik-unsupported") && (tag.content || '').trim()) {
 					cardReport.unsupported = tag.content;
-					cardReport.more.tagLocations["kik-unsupported"] = (tag.parentNode === document.head);
+					cardReport.more.tagInHead["kik-unsupported"] = (tag.parentNode === document.head);
 				}
 			}
 
@@ -172,17 +172,17 @@ exports.runTests = function(url, callback) {
 
 				if ((tag.rel === "kik-icon") && (tag.href || '').trim()) {
 					cardReport.more.icon = tag.href;
-					cardReport.more.tagLocations["kik-icon"] = (tag.parentNode === document.head);
+					cardReport.more.tagInHead["kik-icon"] = (tag.parentNode === document.head);
 				}
 
 				if ((tag.rel === "privacy") && (tag.href || '').trim()) {
 					cardReport.link.privacy = tag.href;
-					cardReport.more.tagLocations["privacy"] = (tag.parentNode === document.head);
+					cardReport.more.tagInHead["privacy"] = (tag.parentNode === document.head);
 				}
 
 				if ((tag.rel === "terms") && (tag.href || '').trim()) {
 					cardReport.link.terms = tag.href;
-					cardReport.more.tagLocations["terms"] = (tag.parentNode === document.head);
+					cardReport.more.tagInHead["terms"] = (tag.parentNode === document.head);
 				}
 			}
 
