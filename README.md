@@ -8,7 +8,7 @@ An online service that runs many of our QA checklist tests. It cab be used for c
 
 The service is avilible at [cards-tester.herokuapp.com](http://cards-tester.herokuapp.com).
 
-The tester uses phantomjs running on heroku. It requires the builtpack-multi buildback to be configured on the heroku application. Details can be found here (heroku-buildpack-multi)[https://github.com/ddollar/heroku-buildpack-multi]
+The tester uses phantomjs running on heroku. It requires the builtpack-multi buildback to be configured on the heroku application. Details can be found here [heroku-buildpack-multi](https://github.com/ddollar/heroku-buildpack-multi)
 
 
 ###Results
