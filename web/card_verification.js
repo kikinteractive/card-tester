@@ -10,10 +10,12 @@ exports.runTests = function(url, callback) {
 	// 	url = system.args[1];
 	// }
 
-	var beginTime = Date.now(),
-		logFilter = "#######CARDTESTER#######",
-		domLoaded = false,
+	var beginTime   = Date.now(),
+		logFilter   = "#######CARDTESTER#######",
+		domLoaded   = false,
 		domLoadTime, fullLoadTime;
+
+	var SWEAR_WORDS = /ass|asshole|bitch|cunt|damn|dick|dyke|faggot|fuck|nigger|penis|pussy|shit|sex|spic|shit|vagina|whore/gi;
 
 	page.settings.localToRemoteUrlAccessEnabled = true;
 	page.settings.webSecurityEnabled = false;
@@ -129,6 +131,8 @@ exports.runTests = function(url, callback) {
 			return document.title;
 		});
 
+		cardReport.more.title_clean = !SWEAR_WORDS.test(cardReport.more.title);
+
 		cardReport.more.canon = page.evaluate(function() {
 			var canon = location.href.replace("http://", "").replace(location.search, "");
 
@@ -146,7 +150,7 @@ exports.runTests = function(url, callback) {
 			};
 		});
 
-		cardReport = page.evaluate(function (cardReport, logFilter) {
+		cardReport = page.evaluate(function (cardReport, logFilter, SWEAR_WORDS) {
 
 			var metaTags = document.querySelectorAll("meta");
 
@@ -156,6 +160,7 @@ exports.runTests = function(url, callback) {
 
 				if ((tag.name === "description") && (tag.content || '').trim()) {
 					cardReport.more.description = tag.content;
+					cardReport.more.description_clean = !SWEAR_WORDS.test(cardReport.more.description);
 					cardReport.more.tagLocations["description"] = (tag.parentNode === document.head);
 				}
 
@@ -194,11 +199,15 @@ exports.runTests = function(url, callback) {
 
 			return cardReport;
 
-		}, cardReport, logFilter);
+		}, cardReport, logFilter, SWEAR_WORDS);
 
 		cardReport.load.manifest = page.evaluate(function(){
 			return document.querySelectorAll('html')[0].getAttribute("manifest");
 		});
+
+		cardReport.more.pg13 = page.evaluate(function(SWEAR_WORDS){
+			return !SWEAR_WORDS.test(document.querySelector("html").textContent);
+		}, SWEAR_WORDS);
 
 		cardReport.layout.topbar_android = page.evaluate(function(){
 			var topBar = document.querySelectorAll('.app-topbar');

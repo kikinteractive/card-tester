@@ -170,6 +170,12 @@
 						} else {
 							getTableRow(".moretests", ++count, "Sidebar Title", data.more.title, true);
 						}
+
+						if ( data.more.title_clean ) {
+							getTableRow(".moretests", ++count, "Sidebar Title PG13", data.more.title + " appears to be PG13", true);
+						} else {
+							getTableRow(".moretests", ++count, "Sidebar Title PG13", data.more.title + " doesn't look to be PG13", -1);
+						}
 					} else {
 						getTableRow(".moretests", ++count, "Sidebar Title", "", false);
 					}
@@ -190,8 +196,20 @@
 						} else {
 							getTableRow(".moretests", ++count, "More Description", data.more.description, true);
 						}
+
+						if ( data.more.description_clean ) {
+							getTableRow(".moretests", ++count, "More Description PG13", data.more.description + " appears to be PG13", true);
+						} else {
+							getTableRow(".moretests", ++count, "More Description PG13", data.more.description + " doesn't look to be PG13", -1);
+						}
 					} else {
 						getTableRow(".moretests", ++count, "More Description", "No description found", false);
+					}
+
+					if ( data.more && data.more.pg13 ) {
+						getTableRow(".moretests", ++count, "PG13 Text", "All text looks to be PG13", true);
+					} else {
+						getTableRow(".moretests", ++count, "PG13 Text", "All text doesn't to be PG13", false);
 					}
 
 					if ( data.more && data.more.hostname ) {
