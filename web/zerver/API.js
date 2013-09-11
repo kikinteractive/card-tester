@@ -121,7 +121,10 @@ function testCardAPI(params, callback) {
 							fetchingTerms = false;
 
 							if ( !fetchingTerms && !fetchingPrivacy ) {
-								callback(parsedData);
+								callback(200, {
+									'Content-Type'  : 'application/json' ,
+									'Cache-Control' : 'no-cache'
+								}, JSON.stringify(parsedData));
 							}
 						});
 					}
@@ -136,13 +139,15 @@ function testCardAPI(params, callback) {
 							fetchingPrivacy = false;
 
 							if ( !fetchingTerms && !fetchingPrivacy ) {
-								callback(parsedData);
+								callback(200, {
+									'Content-Type'  : 'application/json' ,
+									'Cache-Control' : 'no-cache'
+								}, JSON.stringify(parsedData));
 							}
 						});
 					}
 
 					if ( !parsedData.link.terms && !parsedData.link.privacy ) {
-						//callback(parsedData);
 						callback(200, {
 							'Content-Type'  : 'application/json' ,
 							'Cache-Control' : 'no-cache'
@@ -151,13 +156,22 @@ function testCardAPI(params, callback) {
 
 				} catch(err) {
 					console.log("Error parsing json: " + err);
-					callback();
+					callback(200, {
+						'Content-Type'  : 'application/json' ,
+						'Cache-Control' : 'no-cache'
+					}, '{}');
 				}
 			} else {
-				callback();
+				callback(200, {
+					'Content-Type'  : 'application/json' ,
+					'Cache-Control' : 'no-cache'
+				}, '{}');
 			}
 		} else {
-			callback();
+			callback(200, {
+				'Content-Type'  : 'application/json' ,
+				'Cache-Control' : 'no-cache'
+			}, '{}');
 		}
 	});
 
