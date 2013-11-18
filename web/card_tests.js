@@ -17,20 +17,25 @@ function main(url) {
 		return;
 	}
 
-	runTests(url, function (data) {
-		runTests(url, function (data) {
-			console.log(data);
-			phantom.exit(0);
+	preparePage(url, function (page) {
+		preparePage(url, function (page) {
+			if (page) {
+				generateReport(page, function (report) {
+					console.log( JSON.stringify(report) );
+					phantom.exit(0);
+				});
+			} else {
+				phantom.exit(1);
+			}
 		});
 	});
 }
 
-function runTests(url, callback) {
-	var page        = webpage.create(),
-		beginTime   = Date.now(),
-		logFilter   = '#######CARDTESTER#######',
-		domLoaded   = false,
-		domLoadTime, fullLoadTime;
+function preparePage(url, callback) {
+	var page      = webpage.create(),
+		beginTime = Date.now(),
+		logFilter = '#######CARDTESTER#######',
+		domLoaded = false;
 
 	page.settings.localToRemoteUrlAccessEnabled = true;
 	page.settings.webSecurityEnabled = false;
@@ -72,10 +77,10 @@ function runTests(url, callback) {
 		var newDiff = Date.now() - beginTime;
 
 		if (data === 'DOMContentLoaded') {
-			domLoadTime = newDiff;
+			page.domLoadTime = newDiff;
 			domLoaded = true;
 		} else if (data === 'load') {
-			fullLoadTime = newDiff;
+			page.fullLoadTime = newDiff;
 		}
 	};
 
@@ -103,176 +108,174 @@ function runTests(url, callback) {
 
 	page.open(url, function (status) {
 		if (status !== 'success') {
-			console.log(logFilter + "__FAILEDTOLOAD__");
-			callback('');
-			return;
+			console.log(logFilter + '__FAILEDTOLOAD__');
+			callback();
+		} else {
+			callback(page);
+		}
+	});
+}
+
+function generateReport(page, callback) {
+	var cardReport = {
+		more: {
+			includeInMore: false,
+			tagInHead: {}
+		},
+		load: {
+			domLoad: page.domLoadTime,
+			fullLoad: page.fullLoadTime
+		},
+		link: {},
+		layout: {}
+	};
+
+	cardReport.screenshot = generateDataURL(page);
+
+	cardReport.more.title = page.evaluate(function () {
+		return document.title;
+	});
+
+	cardReport.more.title_clean = !SWEAR_WORDS.test(cardReport.more.title);
+
+	cardReport.more.canon = page.evaluate(function () {
+		return {
+			pathname: location.pathname,
+			url: location.href,
+			search: location.search,
+			canon: location.host
+		};
+	});
+
+	cardReport = page.evaluate(function (cardReport, SWEAR_WORDS) {
+		Array.prototype.forEach.call(
+			document.querySelectorAll('meta'),
+			function (tag) {
+				var content = (tag.content || '').trim(),
+					inHead  = (tag.parentNode === document.head);
+				if ( !content ) {
+					return;
+				}
+				switch (tag.name) {
+					case 'description':
+						cardReport.more.description = content;
+						cardReport.more.description_clean = !SWEAR_WORDS.test(cardReport.more.description);
+						cardReport.more.tagInHead['description'] = inHead;
+						break;
+					case 'kik-more':
+						cardReport.more.includeInMore = true;
+						cardReport.more.hostname = content;
+						cardReport.more.tagInHead['kik-more'] = inHead;
+						break;
+					case 'kik-unsupported':
+						cardReport.unsupported = content;
+						cardReport.more.tagInHead['kik-unsupported'] = inHead;
+						break;
+				}
+			}
+		);
+
+		Array.prototype.forEach.call(
+			document.querySelectorAll('link'),
+			function (tag) {
+				var href   = (tag.href || '').trim(),
+					inHead = (tag.parentNode === document.head);
+				if ( !href ) {
+					return;
+				}
+				switch (tag.rel) {
+					case 'kik-icon':
+						cardReport.more.icon = href;
+						cardReport.more.tagInHead['kik-icon'] = inHead;
+						break;
+					case 'privacy':
+						cardReport.link.privacy = href;
+						cardReport.more.tagInHead['privacy'] = inHead;
+						break;
+					case 'terms':
+						cardReport.link.terms = href;
+						cardReport.more.tagInHead['terms'] = inHead;
+						break;
+				}
+			}
+		);
+
+		return cardReport;
+	}, cardReport, SWEAR_WORDS);
+
+	cardReport.load.manifest = page.evaluate(function () {
+		return document.querySelectorAll('html')[0].getAttribute('manifest');
+	});
+
+	cardReport.more.pg13 = page.evaluate(function (SWEAR_WORDS) {
+		return !SWEAR_WORDS.test(document.querySelector('html').textContent);
+	}, SWEAR_WORDS);
+
+	cardReport.layout.topbar_android = page.evaluate(function () {
+		var topBar = document.querySelector('.app-topbar');
+		if (topBar) {
+			return topBar.clientHeight;
+		} else {
+			return null;
+		}
+	});
+
+	cardReport.layout.topbar_ios = page.evaluate(function () {
+		var height = null,
+			topBar = document.querySelector('.app-topbar'),
+			body   = document.querySelector('body');
+
+		body.classList.remove('app-android');
+		body.classList.add('app-ios');
+
+		if (topBar) {
+			height = topBar.clientHeight;
 		}
 
-		var cardReport = {
-			more: {
-				includeInMore: false,
-				tagInHead: {}
-			},
-			load: {
-				domLoad: domLoadTime,
-				fullLoad: fullLoadTime
-			},
-			link: {},
-			layout: {}
-		};
+		body.classList.add('app-android');
+		body.classList.remove('app-ios');
 
-		cardReport.screenshot = generateDataURL(page);
-
-		cardReport.more.title = page.evaluate(function() {
-			return document.title;
-		});
-
-		cardReport.more.title_clean = !SWEAR_WORDS.test(cardReport.more.title);
-
-		cardReport.more.canon = page.evaluate(function() {
-			var canon = location.href.replace("http://", "").replace(location.search, "");
-
-			if ( location.pathname != "/" ) {
-				canon = canon.replace(location.pathname, "");
-			} else if ( location.pathname === "/" ) {
-				canon = canon.substr(0, canon.length-1);
-			}
-
-			return {
-				pathname: location.pathname,
-				url: location.href,
-				search: location.search,
-				canon: canon
-			};
-		});
-
-		cardReport = page.evaluate(function (cardReport, logFilter, SWEAR_WORDS) {
-
-			var metaTags = document.querySelectorAll("meta");
-
-			for (var i = 0; i < metaTags.length; i++) {
-
-				var tag = metaTags[i];
-
-				if ((tag.name === "description") && (tag.content || '').trim()) {
-					cardReport.more.description = tag.content;
-					cardReport.more.description_clean = !SWEAR_WORDS.test(cardReport.more.description);
-					cardReport.more.tagInHead["description"] = (tag.parentNode === document.head);
-				}
-
-				if ((tag.name === "kik-more") && (tag.content || '').trim()) {
-					cardReport.more.includeInMore = true;
-					cardReport.more.hostname = tag.content;
-					cardReport.more.tagInHead["kik-more"] = (tag.parentNode === document.head);
-				}
-
-				if ((tag.name === "kik-unsupported") && (tag.content || '').trim()) {
-					cardReport.unsupported = tag.content;
-					cardReport.more.tagInHead["kik-unsupported"] = (tag.parentNode === document.head);
-				}
-			}
-
-			var linkTags = document.querySelectorAll("link");
-
-			for (var j = 0; j < linkTags.length; j++) {
-				var tag = linkTags[j];
-
-				if ((tag.rel === "kik-icon") && (tag.href || '').trim()) {
-					cardReport.more.icon = tag.href;
-					cardReport.more.tagInHead["kik-icon"] = (tag.parentNode === document.head);
-				}
-
-				if ((tag.rel === "privacy") && (tag.href || '').trim()) {
-					cardReport.link.privacy = tag.href;
-					cardReport.more.tagInHead["privacy"] = (tag.parentNode === document.head);
-				}
-
-				if ((tag.rel === "terms") && (tag.href || '').trim()) {
-					cardReport.link.terms = tag.href;
-					cardReport.more.tagInHead["terms"] = (tag.parentNode === document.head);
-				}
-			}
-
-			return cardReport;
-
-		}, cardReport, logFilter, SWEAR_WORDS);
-
-		cardReport.load.manifest = page.evaluate(function () {
-			return document.querySelectorAll('html')[0].getAttribute('manifest');
-		});
-
-		cardReport.more.pg13 = page.evaluate(function (SWEAR_WORDS) {
-			return !SWEAR_WORDS.test(document.querySelector('html').textContent);
-		}, SWEAR_WORDS);
-
-		cardReport.layout.topbar_android = page.evaluate(function () {
-			var topBar = document.querySelectorAll('.app-topbar');
-			if ( topBar.length ) {
-				return topBar[0].clientHeight;
-			}
-			return null;
-		});
-
-		cardReport.layout.topbar_ios = page.evaluate(function () {
-			var height = null,
-				topBar = document.querySelectorAll('.app-topbar'),
-				body   = document.querySelector('body');
-
-			body.classList.remove('app-android');
-			body.classList.add('app-ios');
-
-			if ( topBar.length ) {
-				height = topBar[0].clientHeight;
-			}
-
-			body.classList.add('app-android');
-			body.classList.remove('app-ios');
-
-			return height;
-		});
-
-		var resources = [],
-			size      = 0,
-			fullSize  = 0;
-
-		page.resources.forEach(function (resource) {
-			if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^http:\/\/cardsbridge.kik.com\/.*)/i) && isFirstFetch(resource.request.url) ) {
-				resources.push(resource);
-
-				if ( resource.startReply ) {
-					if ( !resource.domLoaded ) {
-						size += resource.startReply.bodySize;
-						fullSize += resource.startReply.bodySize;
-					} else {
-						fullSize += resource.startReply.bodySize;
-					}
-				}
-			}
-
-			function isFirstFetch(url) {
-				resources.forEach(function(r){
-					if( r.request.url == url ) {
-						return false;
-					}
-				});
-
-				return true;
-			}
-		});
-
-		cardReport.load.resources    = resources;
-		cardReport.load.requestCount = resources.length;
-		cardReport.load.cardSize     = size;
-		cardReport.load.fullSize     = fullSize;
-
-		sleep(2);
-
-		setTimeout(function(){
-			cardReport.screenshot2 = generateDataURL(page);
-
-			callback(JSON.stringify(cardReport));
-		}, 4250);
+		return height;
 	});
+
+	var resources = [],
+		size      = 0,
+		fullSize  = 0;
+
+	page.resources.forEach(function (resource) {
+		if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^http:\/\/cardsbridge.kik.com\/.*)/i) && isFirstFetch(resource.request.url) ) {
+			resources.push(resource);
+			if ( resource.startReply ) {
+				if ( !resource.domLoaded ) {
+					size += resource.startReply.bodySize;
+					fullSize += resource.startReply.bodySize;
+				} else {
+					fullSize += resource.startReply.bodySize;
+				}
+			}
+		}
+
+		function isFirstFetch(url) {
+			resources.forEach(function (r) {
+				if (r.request.url == url) {
+					return false;
+				}
+			});
+			return true;
+		}
+	});
+
+	cardReport.load.resources    = resources;
+	cardReport.load.requestCount = resources.length;
+	cardReport.load.cardSize     = size;
+	cardReport.load.fullSize     = fullSize;
+
+	sleep(2);
+
+	setTimeout(function(){
+		cardReport.screenshot2 = generateDataURL(page);
+		callback(cardReport);
+	}, 4250);
 }
 
 function sleep(seconds) {
@@ -283,5 +286,5 @@ function sleep(seconds) {
 }
 
 function generateDataURL(page) {
-	return "data:image/png;base64," + page.renderBase64();
+	return 'data:image/png;base64,' + page.renderBase64();
 }
