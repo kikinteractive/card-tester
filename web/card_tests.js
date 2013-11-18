@@ -111,6 +111,7 @@ function runTests(url, callback) {
 
 		if (status !== 'success') {
 			console.log(logFilter + "__FAILEDTOLOAD__");
+			callback('');
 			return;
 		}
 
