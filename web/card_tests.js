@@ -6,11 +6,11 @@ var IOS_5       = 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWe
 	ANDROID_4_2 = 'Mozilla/5.0 (Linux; U; Android 4.2; en-us; Nexus 4 Build/JOP24G) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30',
 	SWEAR_WORDS = /\sasshole\s|\sbitch\s|\scunt\s|\sdamn\s|\sdick\s|\sdyke\s|\sfaggot\s|\sfuck\s|\sfuckass\s|\snigger\s|\spenis\s|\spussy\s|\sshit\s|\ssex\s|\sspic\s|\sshit\s|\svagina\s|\swhore\s/gi;
 
-main.apply(system, system.args);
+runTest( system.args[1] );
 
 
 
-function main(url) {
+function runTest(url) {
 	if ( !url ) {
 		console.log('Usage: card_tests.js <some URL>');
 		phantom.exit(1);
@@ -18,16 +18,18 @@ function main(url) {
 	}
 
 	preparePage(url, function (page) {
-		preparePage(url, function (page) {
-			if (page) {
-				generateReport(page, function (report) {
-					console.log( JSON.stringify(report) );
-					phantom.exit(0);
-				});
-			} else {
-				phantom.exit(1);
-			}
-		});
+		setTimeout(function () {
+			preparePage(url, function (page) {
+				if (page) {
+					generateReport(page, function (report) {
+						console.log( JSON.stringify(report) );
+						phantom.exit(0);
+					});
+				} else {
+					phantom.exit(1);
+				}
+			});
+		}, 1000);
 	});
 }
 
@@ -270,19 +272,10 @@ function generateReport(page, callback) {
 	cardReport.load.cardSize     = size;
 	cardReport.load.fullSize     = fullSize;
 
-	sleep(2);
-
 	setTimeout(function(){
 		cardReport.screenshot2 = generateDataURL(page);
 		callback(cardReport);
-	}, 4250);
-}
-
-function sleep(seconds) {
-	var start = Date.now();
-	while (Date.now()-start < seconds*1000) {
-		start = start;
-	}
+	}, 6250);
 }
 
 function generateDataURL(page) {
