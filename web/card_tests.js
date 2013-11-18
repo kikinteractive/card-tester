@@ -107,12 +107,11 @@ function runTests(url, callback) {
 
 	page.open(url, function (status) {
 
-		var loadTime;
+		var loadTime = Date.now() - beginTime;
 
 		if (status !== 'success') {
 			console.log(logFilter + "__FAILEDTOLOAD__");
-		} else {
-			loadTime = Date.now() - beginTime;
+			return;
 		}
 
 		var cardReport = {
