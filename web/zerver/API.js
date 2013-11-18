@@ -11,7 +11,7 @@ function testCard(url, callback) {
 }
 
 function testCardAPI(params, callback) {
-	
+
 	var url = decodeURIComponent(params.url);
 
 	runTests(url, function(retVal){
@@ -33,7 +33,7 @@ function runTests(url, callback) {
 
 	var childProcess = require('child_process'),
 		output       = '',
-		phantomjs    = childProcess.spawn('phantomjs', ['--web-security=false', '--disk-cache=false', 'card_tests.js', url]);
+		phantomjs    = childProcess.spawn('phantomjs', ['--web-security=false', '--ignore-ssl-errors=yes', '--disk-cache=false', 'card_tests.js', url]);
 
 	phantomjs.stdout.on('data', function(data) {
 		output += data;
@@ -44,13 +44,13 @@ function runTests(url, callback) {
 		if (output) {
 
 			var cleaned = output.replace("#######CARDTESTER#######", "");
-			
+
 			if ( cleaned.length && cleaned != "__FAILEDTOLOAD__" ) {
 				try {
-				
+
 					var parsedData = JSON.parse(cleaned),
 						fetchingTerms = false,
-						fetchingPrivacy = false;			
+						fetchingPrivacy = false;
 
 					if ( parsedData.link.terms ) {
 
