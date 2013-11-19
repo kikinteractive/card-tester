@@ -113,7 +113,7 @@ function preparePage(url, callback) {
 	};
 
 	page.open(url, function (status) {
-		if (status !== 'success') {
+		if (status !== 'success' || Object.keys(page.errors).length) {
 			console.log(logFilter + '__FAILEDTOLOAD__');
 			console.log(logFilter + JSON.stringify(page.errors));
 			callback();
@@ -250,7 +250,7 @@ function generateReport(page, callback) {
 		fullSize  = 0;
 
 	page.resources.forEach(function (resource) {
-		if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^http:\/\/cardsbridge.kik.com\/.*)/i) && isFirstFetch(resource.request.url) ) {
+		if ( !resource.request.url.match(/(^data:image\/.*)/i) && !resource.request.url.match(/(^https?:\/\/cardsbridge.kik.com\/.*)/i) && isFirstFetch(resource.request.url) ) {
 			resources.push(resource);
 			if ( resource.startReply ) {
 				if ( !resource.domLoaded ) {
