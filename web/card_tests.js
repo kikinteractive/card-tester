@@ -18,23 +18,18 @@ function runTest(url) {
 	}
 
 	preparePage(url, function (page) {
-		setTimeout(function () {
-			preparePage(url, function (page) {
-				if (page) {
-					generateReport(page, function (report) {
-						console.log( JSON.stringify(report) );
-						setTimeout(function () {
-							sleep(1);
-							setTimeout(function () {
-								phantom.exit(0);
-							}, 1000);
-						}, 0);
-					});
-				} else {
-					phantom.exit(1);
-				}
-			});
-		}, 1000);
+		preparePage(url, function (page) {
+			if (page) {
+				generateReport(page, function (report) {
+					console.log( JSON.stringify(report) );
+					setTimeout(function () {
+						phantom.exit(0);
+					}, 1000);
+				});
+			} else {
+				phantom.exit(1);
+			}
+		});
 	});
 }
 
@@ -285,7 +280,7 @@ function generateReport(page, callback) {
 	setTimeout(function(){
 		cardReport.screenshot2 = generateDataURL(page);
 		callback(cardReport);
-	}, 5000);
+	}, 3000);
 }
 
 function generateDataURL(page) {
