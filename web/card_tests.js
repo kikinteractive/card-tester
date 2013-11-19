@@ -23,7 +23,12 @@ function runTest(url) {
 				if (page) {
 					generateReport(page, function (report) {
 						console.log( JSON.stringify(report) );
-						phantom.exit(0);
+						setTimeout(function () {
+							sleep(1);
+							setTimeout(function () {
+								phantom.exit(0);
+							}, 1000);
+						}, 0);
 					});
 				} else {
 					phantom.exit(1);
