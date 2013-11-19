@@ -43,7 +43,6 @@ function preparePage(url, callback) {
 	page.settings.webSecurityEnabled = false;
 	page.settings.clearMemoryCaches = true;
 	page.settings.appCache = false;
-	page.settings.userAgent = IOS_5;
 	page.settings.userAgent = ANDROID_4_2;
 
 	page.errors = {};
@@ -278,21 +277,12 @@ function generateReport(page, callback) {
 	cardReport.load.cardSize     = size;
 	cardReport.load.fullSize     = fullSize;
 
-	sleep(2);
-
 	setTimeout(function(){
 		cardReport.screenshot2 = generateDataURL(page);
 		callback(cardReport);
-	}, 4250);
+	}, 5000);
 }
 
 function generateDataURL(page) {
 	return 'data:image/png;base64,' + page.renderBase64();
-}
-
-function sleep(seconds) {
-	var start = Date.now();
-	while (Date.now()-start < seconds*1000) {
-		start = start;
-	}
 }
