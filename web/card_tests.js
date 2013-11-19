@@ -46,6 +46,7 @@ function preparePage(url, callback) {
 	page.settings.userAgent = IOS_5;
 	page.settings.userAgent = ANDROID_4_2;
 
+	page.errors = {};
 	page.resources = [];
 	page.appCache = false;
 	page.webSecurityEnabled = false;
@@ -108,9 +109,14 @@ function preparePage(url, callback) {
 		}
 	};
 
+	page.onResourceError = function (err) {
+		page.errors[err.url] = err.errorString;
+	};
+
 	page.open(url, function (status) {
 		if (status !== 'success') {
 			console.log(logFilter + '__FAILEDTOLOAD__');
+			console.log(logFilter + JSON.stringify(page.errors));
 			callback();
 		} else {
 			callback(page);
@@ -272,12 +278,21 @@ function generateReport(page, callback) {
 	cardReport.load.cardSize     = size;
 	cardReport.load.fullSize     = fullSize;
 
+	sleep(2);
+
 	setTimeout(function(){
 		cardReport.screenshot2 = generateDataURL(page);
 		callback(cardReport);
-	}, 6250);
+	}, 4250);
 }
 
 function generateDataURL(page) {
 	return 'data:image/png;base64,' + page.renderBase64();
+}
+
+function sleep(seconds) {
+	var start = Date.now();
+	while (Date.now()-start < seconds*1000) {
+		start = start;
+	}
 }
