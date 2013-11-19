@@ -72,7 +72,7 @@ function runTests(url, callback) {
 				}
 			} catch(err) {
 				console.log("Error parsing json: " + err);
-				console.log(output);
+				// console.log(output);
 				callback();
 			}
 		} else {
