@@ -113,7 +113,7 @@ function preparePage(url, callback) {
 	};
 
 	page.open(url, function (status) {
-		if (status !== 'success' || Object.keys(page.errors).length) {
+		if (status !== 'success') {
 			console.log(logFilter + '__FAILEDTOLOAD__');
 			console.log(logFilter + JSON.stringify(page.errors));
 			callback();
