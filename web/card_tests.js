@@ -91,11 +91,12 @@ function preparePage(url, callback) {
 	};
 
 	page.onResourceRequested = function (req) {
+		var isCardURL = (req.url.substr(0, 4) === 'card');
 		page.resources[req.id] = {
 			request: req,
 			startReply: null,
 			endReply: null,
-			domLoaded: (req.url === page.url ? true : domLoaded)
+			domLoaded: (isCardURL || domLoaded)
 		};
 	};
 
