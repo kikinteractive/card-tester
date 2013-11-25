@@ -93,15 +93,21 @@ function preparePage(url, callback) {
 	page.onResourceRequested = function (req) {
 		var isRoot    = (page.url === 'about:blank' || req.url === page.url),
 			isCardURL = (req.url.substr(0, 4) === 'card');
+		if (isCardURL) {
+			return;
+		}
 		page.resources[req.id] = {
 			request: req,
 			startReply: null,
 			endReply: null,
-			domLoaded: (isRoot || isCardURL || domLoaded)
+			domLoaded: (isRoot || domLoaded)
 		};
 	};
 
 	page.onResourceReceived = function (res) {
+		if ( !page.resources[res.id] ) {
+			return;
+		}
 		if (res.stage === 'start') {
 			page.resources[res.id].startReply = res;
 		}
