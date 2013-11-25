@@ -91,6 +91,8 @@ function preparePage(url, callback) {
 	};
 
 	page.onResourceRequested = function (req) {
+		console.log('PAGE   : ' + page.url);
+		console.log('REQUEST: ' + req.url);
 		page.resources[req.id] = {
 			request: req,
 			startReply: null,
