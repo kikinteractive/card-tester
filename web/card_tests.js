@@ -95,7 +95,7 @@ function preparePage(url, callback) {
 			request: req,
 			startReply: null,
 			endReply: null,
-			domLoaded: domLoaded
+			domLoaded: (req.url === page.url ? false : domLoaded)
 		};
 	};
 
