@@ -2,7 +2,7 @@
 		$("form").submit(function(d){
 
 		var data = $("#cardurl").val();
-		
+
 		$(".alert").remove();
 
 		if ( data.indexOf("http") != 0 ) {
@@ -18,7 +18,7 @@
 		API.testCard(data, function(data){
 
 			$("#submitbtn").removeClass("disabled").text("Run Tests");
-			
+
 			if ( !data ) {
 				showFormError("Something went wrong :( Please try again.");
 				return;
@@ -79,9 +79,17 @@
 			}
 
 			if ( data.more && data.more.hostname ) {
+				var hostname = data.more.hostname,
+					isHttps  = false;
+				if (hostname.substr(0, 7) === 'http://') {
+					hostname = hostname.substr(7);
+				} else if (hostname.substr(0, 8) === 'https://') {
+					hostname = hostname.substr(8);
+					isHttps = true;
+				}
+				hostname = hostname.split('/')[0];
 
 				var canonMatchesKikMore = (data.more.hostname === data.more.canon.canon);
-
 				if ( canonMatchesKikMore ) {
 					if ( data.more.tagInHead['kik-more'] === false ) {
 						getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>" + "<br><br> (Not in document HEAD)", -1);
@@ -89,17 +97,11 @@
 						getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>", canonMatchesKikMore);
 					}
 				} else {
-
-					if ( data.more.hostname.indexOf("http://") === 0 ) {
-						getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>Should not include http:// in the kik-more meta tag</b>", canonMatchesKikMore);
+					canonMatchesKikMore = (hostname === data.more.canon.canon);
+					if ( canonMatchesKikMore ) {
+						getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>", canonMatchesKikMore);
 					} else {
-						canonMatchesKikMore = (data.more.hostname === "https://" + data.more.canon.canon);
-						
-						if ( canonMatchesKikMore ) {
-							getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>matches canonicalized URL</b>", canonMatchesKikMore);
-						} else {
-							getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>Should include https:// to ensure https url gets used</b>", canonMatchesKikMore);
-						}	
+						getTableRow(".moretests", ++count, "Include In More", data.more.hostname + " <b>Should include https:// to ensure https url gets used</b>", canonMatchesKikMore);
 					}
 				}
 			} else {
@@ -228,7 +230,7 @@
 			}
 		}).error(function(){
 			$("#submitbtn").removeClass("disabled").text("Run Tests");
-			
+
 			if ( !data ) {
 				showFormError("Something went wrong :( Please try again.");
 				return;
