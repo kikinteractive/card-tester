@@ -1,6 +1,6 @@
 {
   "author" : "Jairaj Sethi <j@jairaj.org> (http://jairaj.org/)",
-  "name" : "cards-tester" ,
+  "name" : "cards-tester-service" ,
   "version" : "0.0.1" ,
   "engines" : {
     "node" : "0.10.x" ,
@@ -9,6 +9,6 @@
   "dependencies" : {
     "request" : "2.29.0",
     "zerver" : "0.14.3",
-    "cards-tester" : "x"
+    "cards-tester" : "0.0.5"
   }
 }
