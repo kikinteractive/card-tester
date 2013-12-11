@@ -2,19 +2,12 @@
   "author" : "Jairaj Sethi <j@jairaj.org> (http://jairaj.org/)",
   "name" : "cards-tester" ,
   "description" : "basic tests for kik cards",
-  "version" : "0.0.1" ,
+  "version" : "0.0.2" ,
   "license" : "MIT" ,
   "engines" : {
     "node" : ">=0.8"
   },
-  "dependencies" : {
-    "zerver"  : "0.12.9",
-    "request" : "2.27.0"
-  },
-  "scripts" : {
-    "start" : "zerver --manifest=cache.manifest web"
-  },
   "bin" : {
-    "cards-tester": "run.js"
+    "cards-tester": "index.js"
   }
 }

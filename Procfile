@@ -1,1 +1,0 @@
-web: zerver -p web

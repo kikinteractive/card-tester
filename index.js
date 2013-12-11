@@ -1,75 +1,17 @@
 #!/usr/bin/env node
 
-var request = require('request');
-
 var url = process.argv[2];
 if (typeof url !== 'string' || !url.length) {
 	console.error('usage: cards-tester <url>');
 	process.exit(1);
 }
-runTests(url, function (data) {
+require('./test').run(url, function (data) {
 	if (data) {
 		printResults(data);
 	} else {
 		console.error('failed to complete tests');
 	}
 });
-
-function runTests(url, callback) {
-	var childProcess = require('child_process'),
-		output       = '',
-		phantomjs    = childProcess.spawn('phantomjs', ['--web-security=false', '--ignore-ssl-errors=yes', '--ssl-protocol=any', '--disk-cache=false', 'web/card_tests.js', url]);
-
-	phantomjs.stdout.on('data', function(data) {
-		output += data;
-	});
-
-	phantomjs.stdout.on('end', function(data) {
-		if (output) {
-			try {
-				var parsedData = JSON.parse( output.replace('#######CARDTESTER#######', '') ),
-					fetchingTerms = false,
-					fetchingPrivacy = false;
-
-				if ( parsedData.link.terms ) {
-					fetchingTerms = true;
-					fetchLink(parsedData.link.terms, function(status){
-						parsedData.link.termsStatus = status;
-						fetchingTerms = false;
-						if ( !fetchingTerms && !fetchingPrivacy ) {
-							callback(parsedData);
-						}
-					});
-				}
-
-				if ( parsedData.link.privacy ) {
-					fetchingPrivacy = true;
-					fetchLink(parsedData.link.privacy, function(status){
-						parsedData.link.privacyStatus = status;
-						fetchingPrivacy = false;
-						if ( !fetchingTerms && !fetchingPrivacy ) {
-							callback(parsedData);
-						}
-					});
-				}
-
-				if ( !parsedData.link.terms && !parsedData.link.privacy ) {
-					callback(parsedData);
-				}
-			} catch(err) {
-				callback();
-			}
-		} else {
-			callback();
-		}
-	});
-
-	function fetchLink(url, callback) {
-		request(url, function (error, response, body) {
-			callback(response.statusCode);
-		});
-	}
-}
 
 function printResults(data) {
 	var success = true;
