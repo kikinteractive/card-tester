@@ -2,7 +2,7 @@
   "author" : "Jairaj Sethi <j@jairaj.org> (http://jairaj.org/)",
   "name" : "cards-tester" ,
   "description" : "basic tests for kik cards",
-  "version" : "0.0.4" ,
+  "version" : "0.0.5" ,
   "license" : "MIT" ,
   "repository" : {
     "type" : "git",
