@@ -1,8 +1,8 @@
 ## Install
 
-```sh
-sudo npm install -g cards-tester
-```
+1. Make sure you have NodeJS, http://nodejs.org/download/
+2. Make sure you have PhantomJS, http://phantomjs.org/download.html
+3. Run this command, `sudo npm install -g cards-tester`
 
 ## Usage
 
