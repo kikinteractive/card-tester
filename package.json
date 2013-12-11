@@ -1,5 +1,5 @@
 {
-  "name" : "cards-automation" ,
+  "name" : "cards-tester" ,
   "version" : "0.0.1" ,
   "engines" : {
     "node" : "0.8.x" ,
@@ -11,5 +11,8 @@
   },
   "scripts" : {
     "start" : "zerver --manifest=cache.manifest web"
+  },
+  "bin" : {
+    "cards-tester": "run.js"
   }
 }
