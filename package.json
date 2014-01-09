@@ -9,6 +9,6 @@
   "dependencies" : {
     "request" : "2.29.0",
     "zerver" : "0.14.3",
-    "cards-tester" : "0.0.5"
+    "cards-tester" : "0.0.6"
   }
 }
