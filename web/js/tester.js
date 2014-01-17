@@ -30,6 +30,12 @@
 
 			var count = 0;
 
+			if (data.hasCardsJS) {
+				getTableRow(".moretests", ++count, "Cards.js", "looks good", true);
+			} else {
+				getTableRow(".moretests", ++count, "Cards.js", "cards.js is missing", -1);
+			}
+
 			if ( data.more && data.more.title ) {
 				if ( data.more.tagInHead['kik-more'] === false ) {
 					getTableRow(".moretests", ++count, "Sidebar Title", data.more.title + "<br><br> (Not in document HEAD)", -1);
