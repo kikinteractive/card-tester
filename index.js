@@ -16,6 +16,13 @@ require('./test').run(url, function (data) {
 function printResults(data) {
 	var success = true;
 
+	if ( !data.hasCardsJS ) {
+		success = false;
+		console.error('CARDS JS SCRIPT');
+		console.error('missing, check out http://cards.kik.com/docs/basic/#script');
+		console.error('');
+	}
+
 	if ( !data.more.title ) {
 		success = false;
 		console.error('DOCUMENT TITLE');

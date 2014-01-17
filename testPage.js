@@ -34,10 +34,12 @@ function runTest(url) {
 }
 
 function preparePage(url, callback) {
-	var page      = webpage.create(),
-		beginTime = Date.now(),
-		logFilter = '#######CARDTESTER#######',
-		domLoaded = false;
+	var page         = webpage.create(),
+		beginTime    = Date.now(),
+		logFilter    = '#######CARDTESTER#######',
+		domLoaded    = false,
+		windowLoaded = false,
+		onWindowLoad;
 
 	page.settings.localToRemoteUrlAccessEnabled = true;
 	page.settings.webSecurityEnabled = false;
@@ -46,6 +48,7 @@ function preparePage(url, callback) {
 	page.settings.userAgent = ANDROID_4_2;
 
 	page.errors = {};
+	page.hasCardsJS = false;
 	page.resources = [];
 	page.appCache = false;
 	page.webSecurityEnabled = false;
@@ -70,6 +73,11 @@ function preparePage(url, callback) {
 
 		page.evaluate(function(domContentLoadedMsg) {
 			window.addEventListener('load', function() {
+				try {
+					if (typeof window.cards._.id === 'string') {
+						window.callPhantom('hasCardsJS');
+					}
+				} catch (err) {}
 				window.callPhantom('load');
 			}, false);
 		});
@@ -83,6 +91,12 @@ function preparePage(url, callback) {
 			domLoaded = true;
 		} else if (data === 'load') {
 			page.fullLoadTime = newDiff;
+			windowLoaded = true;
+			if (onWindowLoad) {
+				onWindowLoad();
+			}
+		} else if (data === 'hasCardsJS') {
+			page.hasCardsJS = true;
 		}
 	};
 
@@ -126,13 +140,20 @@ function preparePage(url, callback) {
 			console.log(logFilter + JSON.stringify(page.errors));
 			callback();
 		} else {
-			callback(page);
+			if (windowLoaded) {
+				callback(page);
+			} else {
+				onWindowLoad = function () {
+					callback(page);
+				};
+			}
 		}
 	});
 }
 
 function generateReport(page, callback) {
 	var cardReport = {
+		hasCardsJS: !!page.hasCardsJS,
 		more: {
 			includeInMore: false,
 			tagInHead: {}
