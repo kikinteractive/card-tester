@@ -69,6 +69,6 @@ function runTests(url, callback) {
 
 function fetchLink(url, callback) {
 	request(url, function (error, response, body) {
-		callback(response.statusCode);
+		callback(response ? response.statusCode : 0);
 	});
 }
