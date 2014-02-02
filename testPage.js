@@ -53,7 +53,6 @@ function preparePage(url, callback) {
 	page.appCache = false;
 	page.webSecurityEnabled = false;
 	page.viewportSize = { width: 320, height : 548 };
-	page.navigationLocked = true;
 
 	page.onConsoleMessage = function (msg) {
 		if (msg.indexOf(logFilter) === 0) {
