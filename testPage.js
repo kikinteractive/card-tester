@@ -69,9 +69,7 @@ function preparePage(url, callback) {
 			document.addEventListener('DOMContentLoaded', function() {
 				window.callPhantom('DOMContentLoaded');
 			}, false);
-		});
 
-		page.evaluate(function(domContentLoadedMsg) {
 			window.addEventListener('load', function() {
 				try {
 					if (typeof window.cards._.id === 'string') {
@@ -94,6 +92,7 @@ function preparePage(url, callback) {
 			windowLoaded = true;
 			if (onWindowLoad) {
 				onWindowLoad();
+				onWindowLoad = null;
 			}
 		} else if (data === 'hasCardsJS') {
 			page.hasCardsJS = true;
@@ -102,6 +101,21 @@ function preparePage(url, callback) {
 
 	page.onLoadStarted = function() {
 		page.startTime = new Date(); //TODO: why?
+	};
+
+	page.onNavigationRequested = function (url, type, willNavigate, main) {
+		if (page.navigationLocked && !windowLoaded) {
+			page.evaluate(function () {
+				try {
+					if (typeof window.cards._.id === 'string') {
+						window.callPhantom('hasCardsJS');
+					}
+				} catch (err) {}
+				window.callPhantom('load');
+			});
+		}
+
+		page.navigationLocked = true;
 	};
 
 	page.onResourceRequested = function (req) {
