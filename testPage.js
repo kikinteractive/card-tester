@@ -71,12 +71,14 @@ function preparePage(url, callback) {
 			}, false);
 
 			window.addEventListener('load', function() {
-				try {
-					if (typeof window.cards._.id === 'string') {
-						window.callPhantom('hasCardsJS');
-					}
-				} catch (err) {}
-				window.callPhantom('load');
+				setTimeout(function () {
+					try {
+						if (typeof window.cards._.id === 'string') {
+							window.callPhantom('hasCardsJS');
+						}
+					} catch (err) {}
+					window.callPhantom('load');
+				}, 10);
 			}, false);
 		});
 	};
@@ -106,12 +108,14 @@ function preparePage(url, callback) {
 	page.onNavigationRequested = function (url, type, willNavigate, main) {
 		if (page.navigationLocked && !windowLoaded) {
 			page.evaluate(function () {
-				try {
-					if (typeof window.cards._.id === 'string') {
-						window.callPhantom('hasCardsJS');
-					}
-				} catch (err) {}
-				window.callPhantom('load');
+				setTimeout(function () {
+					try {
+						if (typeof window.cards._.id === 'string') {
+							window.callPhantom('hasCardsJS');
+						}
+					} catch (err) {}
+					window.callPhantom('load');
+				}, 10);
 			});
 		}
 
