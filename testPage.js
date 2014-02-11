@@ -70,16 +70,29 @@ function preparePage(url, callback) {
 				window.callPhantom('DOMContentLoaded');
 			}, false);
 
-			window.addEventListener('load', function() {
-				setTimeout(function () {
-					try {
-						if (typeof window.cards._.id === 'string') {
-							window.callPhantom('hasCardsJS');
-						}
-					} catch (err) {}
-					window.callPhantom('load');
-				}, 10);
-			}, false);
+			(function () {
+				if (window.TESTER_LISTENER_SET) {
+					return;
+				}
+				window.TESTER_LISTENER_SET = true;
+				if (document.readyState === 'complete') {
+					sendEvents();
+				} else {
+					window.addEventListener('load', function() {
+						sendEvents();
+					}, false);
+				}
+				function sendEvents() {
+					setTimeout(function () {
+						try {
+							if (typeof window.cards._.id === 'string') {
+								window.callPhantom('hasCardsJS');
+							}
+						} catch (err) {}
+						window.callPhantom('load');
+					}, 0);
+				}
+			})();
 		});
 	};
 
@@ -108,14 +121,29 @@ function preparePage(url, callback) {
 	page.onNavigationRequested = function (url, type, willNavigate, main) {
 		if (page.navigationLocked && !windowLoaded) {
 			page.evaluate(function () {
-				setTimeout(function () {
-					try {
-						if (typeof window.cards._.id === 'string') {
-							window.callPhantom('hasCardsJS');
-						}
-					} catch (err) {}
-					window.callPhantom('load');
-				}, 10);
+				(function () {
+					if (window.TESTER_LISTENER_SET) {
+						return;
+					}
+					window.TESTER_LISTENER_SET = true;
+					if (document.readyState === 'complete') {
+						sendEvents();
+					} else {
+						window.addEventListener('load', function() {
+							sendEvents();
+						}, false);
+					}
+					function sendEvents() {
+						setTimeout(function () {
+							try {
+								if (typeof window.cards._.id === 'string') {
+									window.callPhantom('hasCardsJS');
+								}
+							} catch (err) {}
+							window.callPhantom('load');
+						}, 0);
+					}
+				})();
 			});
 		}
 
