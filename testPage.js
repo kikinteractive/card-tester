@@ -83,6 +83,7 @@ function preparePage(url, callback) {
 					}, false);
 				}
 				function sendEvents() {
+					window.callPhantom('loadTime');
 					setTimeout(function () {
 						try {
 							if (typeof window.cards._.id === 'string') {
@@ -90,7 +91,7 @@ function preparePage(url, callback) {
 							}
 						} catch (err) {}
 						window.callPhantom('load');
-					}, 0);
+					}, 1500);
 				}
 			})();
 		});
@@ -102,8 +103,9 @@ function preparePage(url, callback) {
 		if (data === 'DOMContentLoaded') {
 			page.domLoadTime = newDiff;
 			domLoaded = true;
-		} else if (data === 'load') {
+		} else if (data === 'loadTime') {
 			page.fullLoadTime = newDiff;
+		} else if (data === 'load') {
 			windowLoaded = true;
 			if (onWindowLoad) {
 				onWindowLoad();
@@ -134,6 +136,7 @@ function preparePage(url, callback) {
 						}, false);
 					}
 					function sendEvents() {
+						window.callPhantom('loadTime');
 						setTimeout(function () {
 							try {
 								if (typeof window.cards._.id === 'string') {
@@ -141,7 +144,7 @@ function preparePage(url, callback) {
 								}
 							} catch (err) {}
 							window.callPhantom('load');
-						}, 0);
+						}, 1500);
 					}
 				})();
 			});
