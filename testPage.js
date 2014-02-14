@@ -66,15 +66,10 @@ function preparePage(url, callback) {
 
 	page.onInitialized = function () {
 		page.evaluate(function(domContentLoadedMsg) {
-			document.addEventListener('DOMContentLoaded', function() {
-				window.callPhantom('DOMContentLoaded');
-			}, false);
-
 			(function () {
-				if (window.TESTER_LISTENER_SET) {
-					return;
-				}
-				window.TESTER_LISTENER_SET = true;
+				document.addEventListener('DOMContentLoaded', function() {
+					window.callPhantom('DOMContentLoaded');
+				}, false);
 				if (document.readyState === 'complete') {
 					sendEvents();
 				} else {
@@ -97,37 +92,13 @@ function preparePage(url, callback) {
 		});
 	};
 
-	page.onCallback = function (data) {
-		var newDiff = Date.now() - beginTime;
-
-		if (data === 'DOMContentLoaded') {
-			page.domLoadTime = newDiff;
-			domLoaded = true;
-		} else if (data === 'loadTime') {
-			page.fullLoadTime = newDiff;
-		} else if (data === 'load') {
-			windowLoaded = true;
-			if (onWindowLoad) {
-				onWindowLoad();
-				onWindowLoad = null;
-			}
-		} else if (data === 'hasCardsJS') {
-			page.hasCardsJS = true;
-		}
-	};
-
-	page.onLoadStarted = function() {
-		page.startTime = new Date(); //TODO: why?
-	};
-
 	page.onNavigationRequested = function (url, type, willNavigate, main) {
 		if (page.navigationLocked && !windowLoaded) {
 			page.evaluate(function () {
 				(function () {
-					if (window.TESTER_LISTENER_SET) {
-						return;
-					}
-					window.TESTER_LISTENER_SET = true;
+					document.addEventListener('DOMContentLoaded', function() {
+						window.callPhantom('DOMContentLoaded');
+					}, false);
 					if (document.readyState === 'complete') {
 						sendEvents();
 					} else {
@@ -151,6 +122,33 @@ function preparePage(url, callback) {
 		}
 
 		page.navigationLocked = true;
+	};
+
+	page.onCallback = function (data) {
+		var newDiff = Date.now() - beginTime;
+
+		if (data === 'DOMContentLoaded') {
+			if ( !page.domLoadTime ) {
+				page.domLoadTime = newDiff;
+				domLoaded = true;
+			}
+		} else if (data === 'loadTime') {
+			if ( !page.fullLoadTime ) {
+				page.fullLoadTime = newDiff;
+			}
+		} else if (data === 'load') {
+			if ( !windowLoaded ) {
+				windowLoaded = true;
+				if (onWindowLoad) {
+					onWindowLoad();
+					onWindowLoad = null;
+				}
+			}
+		} else if (data === 'hasCardsJS') {
+			if ( !page.hasCardsJS ) {
+				page.hasCardsJS = true;
+			}
+		}
 	};
 
 	page.onResourceRequested = function (req) {
@@ -195,6 +193,12 @@ function preparePage(url, callback) {
 				onWindowLoad = function () {
 					callback(page);
 				};
+				setTimeout(function () {
+					if (onWindowLoad) {
+						onWindowLoad();
+						onWindowLoad = null;
+					}
+				}, 5*1000);
 			}
 		}
 	});
