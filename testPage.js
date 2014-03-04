@@ -64,63 +64,49 @@ function preparePage(url, callback) {
 		return false;
 	};
 
-	page.onInitialized = function () {
-		page.evaluate(function(domContentLoadedMsg) {
-			(function () {
-				document.addEventListener('DOMContentLoaded', function() {
-					window.callPhantom('DOMContentLoaded');
-				}, false);
-				if (document.readyState === 'complete') {
+	function setupLoadEvents() {
+		(function () {
+			sendCardsJS();
+			document.addEventListener('DOMContentLoaded', function() {
+				window.callPhantom('DOMContentLoaded');
+				sendCardsJS();
+			}, false);
+			if (document.readyState === 'complete') {
+				sendEvents();
+			} else {
+				window.addEventListener('load', function() {
 					sendEvents();
-				} else {
-					window.addEventListener('load', function() {
-						sendEvents();
-					}, false);
-				}
-				function sendEvents() {
-					window.callPhantom('loadTime');
-					setTimeout(function () {
-						try {
-							if (typeof window.cards._.id === 'string') {
-								window.callPhantom('hasCardsJS');
-							}
-						} catch (err) {}
-						window.callPhantom('load');
-					}, 1500);
-				}
-			})();
-		});
+				}, false);
+			}
+			function sendEvents() {
+				window.callPhantom('loadTime');
+				sendCardsJS();
+				setTimeout(function () {
+					sendCardsJS();
+					window.callPhantom('load');
+				}, 1500);
+			}
+			function sendCardsJS() {
+				try {
+					if (typeof window.cards._.id === 'string') {
+						window.callPhantom('hasCardsJS');
+					}
+				} catch (err) {}
+			}
+		})();
+	}
+
+	page.onInitialized = function () {
+		page.evaluate(setupLoadEvents);
 	};
 
 	page.onNavigationRequested = function (url, type, willNavigate, main) {
-		if (page.navigationLocked && !windowLoaded) {
-			page.evaluate(function () {
-				(function () {
-					document.addEventListener('DOMContentLoaded', function() {
-						window.callPhantom('DOMContentLoaded');
-					}, false);
-					if (document.readyState === 'complete') {
-						sendEvents();
-					} else {
-						window.addEventListener('load', function() {
-							sendEvents();
-						}, false);
-					}
-					function sendEvents() {
-						window.callPhantom('loadTime');
-						setTimeout(function () {
-							try {
-								if (typeof window.cards._.id === 'string') {
-									window.callPhantom('hasCardsJS');
-								}
-							} catch (err) {}
-							window.callPhantom('load');
-						}, 1500);
-					}
-				})();
-			});
+		if ( !main ) {
+			return;
 		}
-
+		if (page.navigationLocked && !windowLoaded) {
+			page.evaluate(setupLoadEvents);
+		}
 		page.navigationLocked = true;
 	};
 
@@ -198,7 +184,7 @@ function preparePage(url, callback) {
 						onWindowLoad();
 						onWindowLoad = null;
 					}
-				}, 5*1000);
+				}, 10*1000);
 			}
 		}
 	});
