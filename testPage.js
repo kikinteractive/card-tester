@@ -2,8 +2,8 @@ var fs      = require('fs'),
 	webpage = require('webpage'),
 	system  = require('system');
 
-var IOS_5       = 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3',
-	ANDROID_4_2 = 'Mozilla/5.0 (Linux; U; Android 4.2; en-us; Nexus 4 Build/JOP24G) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30',
+var IOS_5       = 'Kik/7.0.1.76 Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3',
+	ANDROID_4_2 = 'Kik/7.0.1.76 Mozilla/5.0 (Linux; U; Android 4.2; en-us; Nexus 4 Build/JOP24G) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30',
 	SWEAR_WORDS = /\sasshole\s|\sbitch\s|\scunt\s|\sdick\s|\sdyke\s|\sfaggot\s|\sfuck\s|\sfuckass\s|\snigger\s|\spenis\s|\spussy\s|\sshit\s|\ssex\s|\sspic\s|\svagina\s|\swhore\s/gi;
 
 runTest( system.args[1] );
