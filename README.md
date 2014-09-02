@@ -1,3 +1,5 @@
+Maintainer: [Jairaj](https://github.com/jairajs89)
+
 ## Install
 
 1. Make sure you have NodeJS, http://nodejs.org/download/
